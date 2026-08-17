@@ -1,0 +1,14 @@
+[project]
+name = "adk-x402-agent"
+version = "0.1.0"
+description = "x402 market-data buying agent on Google ADK, driven by Gemini"
+requires-python = ">=3.11"
+dependencies = [
+    "google-adk>=2.0",
+    "google-genai>=1.0",
+    # Sibling package in this repo, installed from ../x402_core
+    "x402-core",
+]
+
+[tool.setuptools.packages.find]
+include = ["adk_x402*"]

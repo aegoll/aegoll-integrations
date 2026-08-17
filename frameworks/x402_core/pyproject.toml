@@ -1,0 +1,10 @@
+[project]
+name = "x402-core"
+version = "0.1.0"
+description = "Framework-agnostic x402 payment layer: wallet, tool operations, telemetry"
+requires-python = ">=3.11"
+# Deliberately no framework and no LLM SDK. An agent adds its own.
+dependencies = ["x402[evm,httpx]>=2.18.0"]
+
+[tool.setuptools.packages.find]
+include = ["x402_core*"]

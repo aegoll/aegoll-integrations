@@ -1,0 +1,17 @@
+[project]
+name = "claude-agent-sdk-x402"
+version = "0.1.0"
+description = "Claude Agent SDK buyer that pays for x402 market data, with a Streamlit cockpit"
+requires-python = ">=3.11"
+dependencies = [
+    "claude-agent-sdk>=0.1.0",
+    "x402[evm,httpx]>=2.18.0",
+    "streamlit>=1.40",
+    "python-dotenv>=1.0",
+    # Needed by the optional AEGL governance layer in ../aegl (policy bundles are
+    # YAML). The agent runs without it -- `governance.py` degrades to AEGL off.
+    "pyyaml>=6.0",
+]
+
+[tool.setuptools.packages.find]
+include = ["x402_agent*"]

@@ -1,0 +1,15 @@
+[project]
+name = "langgraph-x402-agent"
+version = "0.1.0"
+description = "x402 market-data buying agent on LangGraph, driven by OpenAI"
+requires-python = ">=3.11"
+dependencies = [
+    "langgraph>=1.0",
+    "langchain-openai>=1.0",
+    "langchain-core>=1.0",
+    # Sibling package in this repo, installed from ../x402_core
+    "x402-core",
+]
+
+[tool.setuptools.packages.find]
+include = ["langgraph_x402*"]
