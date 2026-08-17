@@ -1,7 +1,7 @@
 """Optional AEGL, for the cockpits built by this kit.
 
 The split this file sits on: **hosts wire AEGL up, agents do not**. The LangGraph
-and ADK agent packages never import `aegl` — they accept a duck-typed governor via
+and ADK agent packages never import `aegoll` — they accept a duck-typed governor via
 `x402_core.RunGuard`. The cockpit is the host, so it is allowed to know AEGL exists,
 construct a `Governor`, and hand it in.
 
@@ -11,30 +11,33 @@ shim would have to live in a package both hosts import, and the only candidate i
 depending on the layer above it. Two ~50-line shims that each handle absence
 independently is the cheaper price.
 
-If `aegl` is not importable, `available()` is False and every cockpit runs exactly
+If `aegoll` is not importable, `available()` is False and every cockpit runs exactly
 as it did before governance existed.
 """
 
 from __future__ import annotations
 
-import sys
-from pathlib import Path
 from typing import Any
 
-# aegl sits beside `agents/` in the repo; neither is a published package.
-_AEGL_DIR = Path(__file__).resolve().parents[3] / "aegl"
+# `aegoll` is an installed package, found the way any consumer finds it. The
+# prototype did
+#
+#     _AEGL_DIR = Path(__file__).resolve().parents[3] / "aegl"
+#     sys.path.insert(0, str(_AEGL_DIR))
+#
+# because the layer sat beside `agents/` in one repository and neither was
+# published. Every example here pins `aegoll` from PyPI instead: an example that
+# only works from a particular checkout layout is not an example.
 
 AEGL_AVAILABLE = False
 _IMPORT_ERROR: str | None = None
 
 try:
-    if str(_AEGL_DIR) not in sys.path:
-        sys.path.insert(0, str(_AEGL_DIR))
-    from aegl import ui as aegl_ui  # noqa: E402
-    from aegl import ui_keys as aegl_ui_keys  # noqa: E402
-    from aegl.advisors import available_models, estimate_call_cost_usd  # noqa: E402
-    from aegl.config import available_bundles  # noqa: E402
-    from aegl.plugin import NOT_RECOMMENDED, Governor  # noqa: E402
+    from aegoll import ui as aegl_ui
+    from aegoll import ui_keys as aegl_ui_keys
+    from aegoll.advisors import available_models, estimate_call_cost_usd
+    from aegoll.config import available_bundles
+    from aegoll.plugin import NOT_RECOMMENDED, Governor
 
     AEGL_AVAILABLE = True
 except Exception as exc:  # pragma: no cover - exercised by absence
@@ -67,7 +70,7 @@ def advisor_cost(model: str) -> float:
 
 
 def advisor_warning(model: str) -> str | None:
-    """Whether a model was measured as unusable for advice. See `aegl/EVAL.md`."""
+    """Whether a model was measured as unusable for advice. See aegoll `docs/eval.md`."""
     return NOT_RECOMMENDED.get(model) if AEGL_AVAILABLE else None
 
 
@@ -88,7 +91,10 @@ def build(
     shared budget into one per framework as a side effect.
     """
     if not AEGL_AVAILABLE:
-        raise RuntimeError(f"aegl is not importable: {_IMPORT_ERROR}")
+        raise RuntimeError(
+            "aegoll is not importable, so the cockpit cannot govern anything: "
+            f"{_IMPORT_ERROR}\n  pip install aegoll"
+        )
     return Governor(policy=policy, advisor=advisor, framework=framework)
 
 

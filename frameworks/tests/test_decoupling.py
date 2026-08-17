@@ -69,21 +69,39 @@ def test_no_other_agent_imports_the_claude_agent():
     assert not offenders, NEWLINE_INDENT.join(offenders)
 
 
-def test_aegl_imports_no_agent():
+def test_aegoll_imports_no_agent():
     """The governance layer depends on the payment rail, never on an agent.
 
-    This is the structural claim behind "universal plugin": if AEGL imported one
+    This is the structural claim behind "universal plugin": if the layer imported one
     agent's package it could not honestly be installed into another framework.
+
+    Resolved from the **installed** `aegoll`, and asserted to exist. The prototype's
+    version read
+
+        aegl_pkg = AGENTS_DIR.parent / "aegl" / "aegl"
+
+    which was correct inside the monorepo. Moved here, that path resolves to nothing,
+    `rglob` yields nothing, and the test **passed while checking nothing** — no error,
+    no failure, just a silent stop. That is a worse outcome than a red test, and it is
+    the third time this exact shape has appeared in this restructure.
     """
-    aegl_pkg = AGENTS_DIR.parent / "aegl" / "aegl"
+    aegoll = pytest.importorskip(
+        "aegoll", reason="the governance layer is not installed; `pip install aegoll`"
+    )
+    assert aegoll.__file__ is not None, "aegoll is a namespace package, not a real one"
+    pkg = Path(aegoll.__file__).resolve().parent
+
+    modules = list(pkg.rglob("*.py"))
+    assert modules, f"{pkg} holds no modules — this test would pass by checking nothing"
+
     agent_packages = {"x402_agent", "langgraph_x402", "adk_x402", "claude_agent_sdk"}
     offenders = []
-    for path in aegl_pkg.rglob("*.py"):
+    for path in modules:
         for module, line in _imports(path):
             if module.split(".")[0] in agent_packages:
-                offenders.append(f"{path.relative_to(aegl_pkg)}:{line} imports {module}")
+                offenders.append(f"{path.relative_to(pkg)}:{line} imports {module}")
     assert not offenders, (
-        "AEGL reached into an agent package:" + NEWLINE_INDENT
+        "aegoll reached into an agent package:" + NEWLINE_INDENT
         + NEWLINE_INDENT.join(offenders)
     )
 

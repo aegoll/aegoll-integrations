@@ -78,7 +78,7 @@ def governance_sidebar() -> dict[str, Any]:
     if advisor:
         warning = gov_shim.advisor_warning(advisor[1])
         if warning:
-            # Measured, not guessed -- see aegl/EVAL.md.
+            # Measured, not guessed -- see aegoll docs/eval.md.
             st.sidebar.warning(f"**Not recommended.** {warning}")
 
     return {"enabled": True, "policy": policy, "budget": float(budget), "advisor": advisor}
