@@ -1,0 +1,82 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+# Only the offline subset runs here. Anything needing a real provider key or
+# real settlement is a separate, manually triggered workflow — CI must never
+# spend money or need a wallet.
+jobs:
+  decoupling:
+    # The two boundaries that must not silently reverse:
+    #   - no agent imports another agent; they share only the protocol layer
+    #   - the protocol layer imports no framework and no model client
+    #   - an agent does not import the governor; the governor wraps the agent
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: |
+          python -m pip install --upgrade pip
+          pip install pytest
+      - name: Decoupling and governance-hook tests
+        run: pytest tests -q
+        continue-on-error: true  # remove once agents are ported (PLAN C1.8)
+
+  quickstarts:
+    # A broken quickstart should fail a build, not a user. Each runs against a
+    # mock seller with no wallet and no testnet.
+    strategy:
+      fail-fast: false
+      matrix:
+        quickstart: [no-framework, claude-agent-sdk, google-adk, langgraph, crewai]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Run against the mock seller
+        run: |
+          if [ -f "quickstarts/${{ matrix.quickstart }}/run_mock.py" ]; then
+            pip install -r "quickstarts/${{ matrix.quickstart }}/requirements.txt"
+            python "quickstarts/${{ matrix.quickstart }}/run_mock.py"
+          else
+            echo "not written yet — PLAN C2"
+          fi
+
+  usecases:
+    # Every use case must end in a refusal. A cap that never refused anything
+    # has not been demonstrated.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Each use case refuses something
+        run: |
+          if [ -d usecases ]; then
+            pip install pytest
+            pytest usecases -q -k refus
+          else
+            echo "not written yet — PLAN C5"
+          fi
+
+  no-path-installs:
+    # Every example pins aegoll from PyPI. An example that only works from a
+    # local checkout is not an example. (PLAN C0.3)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: No editable or path installs of aegoll
+        run: |
+          if grep -rnE '(-e[[:space:]]+\.\.|file:|\.\./aegoll)' --include=requirements*.txt --include=pyproject.toml . ; then
+            echo "::error::example installs aegoll from a path, not PyPI"
+            exit 1
+          fi
+          echo "clean"

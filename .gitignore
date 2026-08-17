@@ -1,0 +1,36 @@
+# Python — one venv per framework directory, so glob broadly
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+*/.venv/
+**/.venv/
+.pytest_cache/
+.coverage
+
+# Secrets — real keys and real wallets live here in development
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+wallet*.json
+
+# Agent run output
+.aegoll/
+runs/
+harness/out/
+*.log
+
+# Committed deliberately: the Decision Records each use case emits, so a reader
+# can inspect the evidence without running anything (see PLAN.md C5.10)
+!usecases/**/records/*.jsonl
+
+# Node, for anything pointing at the TypeScript seller
+node_modules/
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
