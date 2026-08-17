@@ -30,17 +30,17 @@ It is also where everything heavy lives, so the `aegoll` package can stay light.
 
 ---
 
-## C1 — Extract the three framework agents ⬜
+## C1 — Port the three framework agents ✅
 
-- [ ] C1.1 Copy `../x402/agents/` in as `frameworks/`, faithful copy first, trailer `Ported-from: Jayzilva/x402@e3e295b agents/` ([P1](../x402-REFERENCE.md))
-- [ ] C1.2 `PROVENANCE.md` written before the copy, not after
-- [ ] C1.3 `x402_core/` lands intact — wallet, six tools, the prompt, telemetry. It knows how to pay over x402 and nothing about how an agent decides to
-- [ ] C1.4 Keep the two things that live in `x402_core` deliberately: **the tool descriptions** (they carry the price signal a model reads before deciding to spend) and **the telemetry shape** (a comparison needs identical measurements)
-- [ ] C1.5 `claude_agent_sdk/`, `google_adk/`, `langgraph/` land intact
-- [ ] C1.6 Carry `tests/test_decoupling.py` — it asserts no agent imports another, and that `x402_core` imports no framework and no model client
-- [ ] C1.7 Carry `tests/test_governance_hook.py` — the inverted-dependency assertion
-- [ ] C1.8 46 tests green after the move
-- [ ] C1.9 Repoint every `from aegl import ...` to `from aegoll import ...`
+- [x] C1.1 Ported faithfully as `frameworks/` — `40dfc06`
+- [x] C1.2 [`PROVENANCE.md`](PROVENANCE.md) written — after the copy this time rather than before, which is the wrong way round and is recorded as such
+- [x] C1.3 `x402_core/` landed intact — wallet, six tools, the prompt, telemetry
+- [x] C1.4 Both deliberate contents of `x402_core` intact — the tool descriptions carrying the price signal, and the telemetry shape
+- [x] C1.5 All three framework agents landed intact
+- [x] C1.6 `test_decoupling.py` carried — **and one of its assertions was found passing vacuously**, see [F-C1](#f-c1--a-test-that-stopped-checking-without-failing--2026-08-17)
+- [x] C1.7 `test_governance_hook.py` carried; the cockpit shim repointed at an installed `aegoll` — `405b95f`
+- [x] C1.8 **46 tests green**, matching a freshly measured POC baseline rather than a documented number
+- [x] C1.9 Every `aegl` import repointed to `aegoll`
 - [ ] C1.10 The seller side stays in `../x402` (`src/server/`, TypeScript). Document how to point an example at it, and how to point one at any other x402 seller instead
 
 **Exit:** three agents running here, 46 tests green, nothing importing `aegl`.
@@ -148,4 +148,37 @@ The measurement code leaves the package and lives here, where a heavy dependency
 
 ## Findings
 
-_(none yet)_
+### F-C1 · A test that stopped checking, without failing — 2026-08-17
+
+`test_aegl_imports_no_agent` asserts the structural claim behind "universal plugin": the
+governance layer never imports an agent's package. It located the layer as
+
+```python
+aegl_pkg = AGENTS_DIR.parent / "aegl" / "aegl"
+```
+
+Correct inside the monorepo. Moved here, that path resolves to nothing, `rglob` yields
+nothing, the loop body never runs — and the test **passes**. No error, no failure. The suite
+sat at 46 green while the claim went entirely unverified.
+
+**Third instance of one pattern in this restructure**, and the second time this codebase has
+produced a vacuously-passing guard:
+
+| Where | Shape |
+|---|---|
+| [F-A1](../aegoll/PLAN.md) | eleven modules resolving paths outside the package |
+| `cockpit_kit/governance.py` | `parents[3] / "aegl"` inserted into `sys.path` |
+| this test | a guessed relative path that resolved to nothing, and passed |
+| *(prototype, before this work)* | a purity test naming files that had become three-line shims |
+
+The lesson is not "fix the path". It is that **a test which locates its subject by guessing a
+relative path has two failure modes, and the silent one is worse.** A red test gets fixed; a
+vacuous one gets trusted.
+
+So the fix is more than a repoint: resolve the subject from the *installed* package, assert
+it exists and holds modules, and skip explicitly when it is absent. Same discipline as
+`aegoll/tests/conftest.py` and `aegoll/tests/test_paths.py`.
+
+**Worth watching for.** Every remaining port is a chance for the same thing. Any test that
+builds a path from `__file__` should be treated as suspect until it has been shown to fail
+when its subject is missing.
