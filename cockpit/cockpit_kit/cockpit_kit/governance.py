@@ -33,8 +33,8 @@ AEGL_AVAILABLE = False
 _IMPORT_ERROR: str | None = None
 
 try:
-    from aegoll import ui as aegl_ui
-    from aegoll import ui_keys as aegl_ui_keys
+    import ui as aegl_ui
+    import ui_keys as aegl_ui_keys
     from aegoll.advisors import available_models, estimate_call_cost_usd
     from aegoll.config import available_bundles
     from aegoll.plugin import NOT_RECOMMENDED, Governor

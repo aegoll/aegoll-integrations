@@ -14,6 +14,12 @@ from pathlib import Path
 import pytest
 
 AGENTS_DIR = Path(__file__).resolve().parents[1]
+
+#: The cockpit kit left `frameworks/` for `cockpit/` when the package shed its UI
+#: (PLAN.md A2, C4). Asserted rather than assumed: a path that resolves to nothing makes
+#: a scanning test pass by checking zero files. See PLAN.md F-C1.
+COCKPIT_KIT = AGENTS_DIR.parent / "cockpit" / "cockpit_kit" / "cockpit_kit"
+assert COCKPIT_KIT.is_dir(), f"{COCKPIT_KIT} is not there; the layout changed"
 for sub in ("x402_core",):
     p = str(AGENTS_DIR / sub)
     if p not in sys.path:
@@ -258,7 +264,7 @@ def test_the_guard_itself_imports_no_governance_layer():
 def test_the_cockpit_sends_exactly_the_kwargs_the_agents_declare():
     import ast
 
-    source = AGENTS_DIR / "cockpit_kit" / "cockpit_kit" / "app.py"
+    source = COCKPIT_KIT / "app.py"
     tree = ast.parse(source.read_text(encoding="utf-8"))
 
     # Collect the string keys assigned into `kwargs[...]` in build_cockpit.
@@ -291,7 +297,7 @@ def test_the_cockpit_sends_exactly_the_kwargs_the_agents_declare():
 
 def test_the_cockpit_shim_degrades_when_aegl_is_absent(monkeypatch):
     """A cockpit must run ungoverned if AEGL is not installed, not crash."""
-    sys.path.insert(0, str(AGENTS_DIR / "cockpit_kit"))
+    sys.path.insert(0, str(COCKPIT_KIT.parent))
     from cockpit_kit import governance as shim
 
     monkeypatch.setattr(shim, "AEGL_AVAILABLE", False)
@@ -306,7 +312,7 @@ def test_the_cockpit_shim_degrades_when_aegl_is_absent(monkeypatch):
 
 def test_the_cockpit_shim_finds_aegl_here():
     """And when it *is* installed, it must actually find it."""
-    sys.path.insert(0, str(AGENTS_DIR / "cockpit_kit"))
+    sys.path.insert(0, str(COCKPIT_KIT.parent))
     from cockpit_kit import governance as shim
 
     assert shim.available(), f"cockpit cannot import aegl: {shim.import_error()}"
@@ -333,7 +339,7 @@ def test_the_byok_panel_is_not_duplicated():
     app = (claude / "app.py").read_text(encoding="utf-8")
     assert "ui_keys" in app, "the Claude cockpit no longer offers key entry"
 
-    kit = (AGENTS_DIR / "cockpit_kit" / "cockpit_kit" / "governance.py").read_text(
+    kit = (COCKPIT_KIT / "governance.py").read_text(
         encoding="utf-8"
     )
     assert "ui_keys" in kit, "the shared cockpits no longer offer key entry"

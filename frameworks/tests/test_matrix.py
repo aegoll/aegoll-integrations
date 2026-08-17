@@ -13,6 +13,10 @@ from pathlib import Path
 import pytest
 
 AGENTS_DIR = Path(__file__).resolve().parents[1]
+
+#: `matrix.py` moved to `harness/` with the other measurement code (PLAN.md C6).
+MATRIX = AGENTS_DIR.parent / "harness" / "matrix.py"
+assert MATRIX.is_file(), f"{MATRIX} is not there; the layout changed"
 if str(AGENTS_DIR) not in sys.path:
     sys.path.insert(0, str(AGENTS_DIR))
 
@@ -143,7 +147,7 @@ def test_the_sweep_imports_no_llm_sdk():
     import ast
 
     banned = {"openai", "anthropic", "groq", "langchain_openai", "google.adk"}
-    source = AGENTS_DIR / "matrix.py"
+    source = MATRIX
     offenders = []
     for node in ast.walk(ast.parse(source.read_text(encoding="utf-8"))):
         names = []
