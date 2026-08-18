@@ -5,10 +5,61 @@ on:
     branches: [main]
   pull_request:
 
-# Only the offline subset runs here. Anything needing a real provider key or
-# real settlement is a separate, manually triggered workflow — CI must never
-# spend money or need a wallet.
+# Only the offline subset runs here. Anything needing a real provider key or real
+# settlement is a separate, manually triggered workflow -- CI must never spend
+# money or need a wallet.
+#
+# Every job below installs `aegoll` from PyPI. That is not incidental: the agents
+# in this repository ran with **no governance at all** for a whole commit because
+# one module resolved a path to a sibling `aegl/` that does not exist here, and
+# absence is a supported state. See PLAN.md F-C1 and the governance-is-present
+# tests. An example that only works from a particular checkout layout is not an
+# example, and a CI job that cannot tell absence from breakage is not a gate.
 jobs:
+  tests:
+    # The whole offline suite, at the paths the tests are actually at.
+    #
+    # This job previously ran `pytest tests -q` with `continue-on-error: true`.
+    # There is no `tests/` directory at the repository root, so it collected
+    # nothing, exited non-zero, and the leniency hid that -- a green tick over
+    # zero assertions. The fourth instance of the shape F-C1 describes.
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ["3.11", "3.12", "3.13"]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Install
+        run: |
+          python -m pip install --upgrade pip
+          pip install pytest 'aegoll>=0.1.0' 'x402[evm,httpx]>=2.18.0'
+      - name: Offline suite
+        run: pytest frameworks/tests harness mock -q
+
+  governance-is-live:
+    # The single most important job in this file, and the one whose absence let
+    # every agent run ungoverned. It asserts the *positive*: aegoll installed,
+    # governance reporting available, real policies visible, and a governor that
+    # actually refuses a payment with an attributed control.
+    #
+    # No `continue-on-error`. If governance is not live, that is the whole
+    # product not working, and it must fail the build rather than be noted.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: |
+          python -m pip install --upgrade pip
+          pip install pytest 'aegoll>=0.1.0' 'x402[evm,httpx]>=2.18.0'
+      - name: Governance is present, and refuses something
+        run: pytest frameworks/tests/test_governance_is_present.py mock/test_governed_run.py -q
+
   decoupling:
     # The two boundaries that must not silently reverse:
     #   - no agent imports another agent; they share only the protocol layer
@@ -22,14 +73,50 @@ jobs:
           python-version: "3.11"
       - run: |
           python -m pip install --upgrade pip
-          pip install pytest
-      - name: Decoupling and governance-hook tests
-        run: pytest tests -q
-        continue-on-error: true  # remove once agents are ported (PLAN C1.8)
+          pip install pytest 'aegoll>=0.1.0' 'x402[evm,httpx]>=2.18.0'
+      - name: Decoupling
+        run: pytest frameworks/tests/test_decoupling.py frameworks/tests/test_governance_hook.py -q
+
+  mock-seller-speaks-x402:
+    # The mock is only worth having if it speaks the real protocol. This asserts
+    # the SDK's own decoder parses what the mock emits -- a mock with its own
+    # header shape, parsed by a matching fake, would prove the agent can talk to
+    # one file and nothing else.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: |
+          python -m pip install --upgrade pip
+          pip install pytest 'aegoll>=0.1.0' 'x402[evm,httpx]>=2.18.0'
+      - name: The mock is faithful, and honest about not settling
+        run: pytest mock/test_mock_seller.py -q
+
+  cockpit:
+    # The Streamlit cockpit. Heavy dependency, and fine *here* -- that is the whole
+    # reason 2,534 lines left the package at PLAN.md A2: nobody installing a spend
+    # cap should get a web framework as a side effect. In this repository it costs
+    # a slower job and nothing else.
+    #
+    # A separate job rather than part of `tests` so a Streamlit release cannot turn
+    # the governance gates red.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: |
+          python -m pip install --upgrade pip
+          pip install pytest streamlit 'aegoll>=0.1.0' 'x402[evm,httpx]>=2.18.0'
+      - name: Cockpit suite
+        run: pytest cockpit -q
 
   quickstarts:
-    # A broken quickstart should fail a build, not a user. Each runs against a
-    # mock seller with no wallet and no testnet.
+    # A broken quickstart should fail a build, not a user. Each runs against the
+    # mock seller: no wallet, no testnet, no provider key.
     strategy:
       fail-fast: false
       matrix:
@@ -43,15 +130,16 @@ jobs:
       - name: Run against the mock seller
         run: |
           if [ -f "quickstarts/${{ matrix.quickstart }}/run_mock.py" ]; then
+            python -m pip install --upgrade pip
             pip install -r "quickstarts/${{ matrix.quickstart }}/requirements.txt"
             python "quickstarts/${{ matrix.quickstart }}/run_mock.py"
           else
-            echo "not written yet — PLAN C2"
+            echo "quickstarts/${{ matrix.quickstart }}/ not written yet -- PLAN.md C2"
           fi
 
   usecases:
-    # Every use case must end in a refusal. A cap that never refused anything
-    # has not been demonstrated.
+    # Every use case must end in a refusal. A cap that never refused anything has
+    # not been demonstrated.
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -61,15 +149,16 @@ jobs:
       - name: Each use case refuses something
         run: |
           if [ -d usecases ]; then
-            pip install pytest
+            python -m pip install --upgrade pip
+            pip install pytest 'aegoll>=0.1.0'
             pytest usecases -q -k refus
           else
-            echo "not written yet — PLAN C5"
+            echo "usecases/ not written yet -- PLAN.md C5"
           fi
 
   no-path-installs:
     # Every example pins aegoll from PyPI. An example that only works from a
-    # local checkout is not an example. (PLAN C0.3)
+    # local checkout is not an example. (PLAN.md C0.3)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -79,4 +168,22 @@ jobs:
             echo "::error::example installs aegoll from a path, not PyPI"
             exit 1
           fi
-          echo "clean"
+          echo "every example installs aegoll from the index"
+
+  every-example-declares-aegoll:
+    # The other half of the same rule. An example that never declares the
+    # governance layer will import whatever happens to be on the path, which is
+    # how this repository ended up ungoverned without noticing.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Each pyproject declares aegoll
+        run: |
+          missing=0
+          for f in $(find . -name pyproject.toml -not -path './.git/*'); do
+            if ! grep -q 'aegoll' "$f"; then
+              echo "::error file=$f::does not declare aegoll"
+              missing=1
+            fi
+          done
+          exit $missing
