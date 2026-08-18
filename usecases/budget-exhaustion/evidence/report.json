@@ -233,7 +233,7 @@
   },
   "decisions": [
     {
-      "at": "2026-08-18T15:12:45.956567+00:00",
+      "at": "2026-08-18T17:34:31.583381+00:00",
       "verdict": "REVIEW",
       "amountUsd": "20.000000",
       "vendor": "data-co",
@@ -242,7 +242,7 @@
       "reason": "per_transaction (per call (base)) admits $10.000000 but the request is $20.000000"
     },
     {
-      "at": "2026-08-18T15:12:45.946365+00:00",
+      "at": "2026-08-18T17:34:31.569373+00:00",
       "verdict": "REJECT",
       "amountUsd": "0.040000",
       "vendor": "openai",
@@ -251,7 +251,7 @@
       "reason": "daily (today) admits $0.000000 but the request is $0.040000"
     },
     {
-      "at": "2026-08-18T15:12:45.886991+00:00",
+      "at": "2026-08-18T17:34:31.462886+00:00",
       "verdict": "REJECT",
       "amountUsd": "0.040000",
       "vendor": "openai",
@@ -260,7 +260,7 @@
       "reason": "daily (today) admits $0.000000 but the request is $0.040000"
     },
     {
-      "at": "2026-08-18T15:12:45.837358+00:00",
+      "at": "2026-08-18T17:34:31.392486+00:00",
       "verdict": "APPROVE",
       "amountUsd": "0.040000",
       "vendor": "openai",
@@ -269,7 +269,7 @@
       "reason": "token budget available for this run"
     },
     {
-      "at": "2026-08-18T15:12:45.791038+00:00",
+      "at": "2026-08-18T17:34:31.314555+00:00",
       "verdict": "APPROVE",
       "amountUsd": "0.040000",
       "vendor": "openai",
@@ -278,7 +278,7 @@
       "reason": "token budget available for this run"
     },
     {
-      "at": "2026-08-18T15:12:45.769510+00:00",
+      "at": "2026-08-18T17:34:31.279693+00:00",
       "verdict": "APPROVE",
       "amountUsd": "0.020000",
       "vendor": "openai",
@@ -299,7 +299,7 @@
     "caveat": "a hash chain detects edits and middle-deletions, not truncation: any prefix of a valid chain is itself valid. Closing that needs an external anchor."
   },
   "versions": {
-    "tesoro": "0.1.0",
+    "tesoro": "0.1.1",
     "aegs": "0.1"
   }
 }

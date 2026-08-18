@@ -36,7 +36,7 @@ jobs:
       - name: Install
         run: |
           python -m pip install --upgrade pip
-          pip install pytest 'tesoro>=0.1.1' 'x402[evm,httpx]>=2.18.0'
+          pip install pytest 'tesoro>=0.1.0' 'x402[evm,httpx]>=2.18.0'
       - name: Offline suite
         run: pytest frameworks/tests harness mock -q
 
@@ -56,7 +56,7 @@ jobs:
           python-version: "3.11"
       - run: |
           python -m pip install --upgrade pip
-          pip install pytest 'tesoro>=0.1.1' 'x402[evm,httpx]>=2.18.0'
+          pip install pytest 'tesoro>=0.1.0' 'x402[evm,httpx]>=2.18.0'
       - name: Governance is present, and refuses something
         run: pytest frameworks/tests/test_governance_is_present.py mock/test_governed_run.py -q
 
@@ -73,7 +73,7 @@ jobs:
           python-version: "3.11"
       - run: |
           python -m pip install --upgrade pip
-          pip install pytest 'tesoro>=0.1.1' 'x402[evm,httpx]>=2.18.0'
+          pip install pytest 'tesoro>=0.1.0' 'x402[evm,httpx]>=2.18.0'
       - name: Decoupling
         run: pytest frameworks/tests/test_decoupling.py frameworks/tests/test_governance_hook.py -q
 
@@ -90,7 +90,7 @@ jobs:
           python-version: "3.11"
       - run: |
           python -m pip install --upgrade pip
-          pip install pytest 'tesoro>=0.1.1' 'x402[evm,httpx]>=2.18.0'
+          pip install pytest 'tesoro>=0.1.0' 'x402[evm,httpx]>=2.18.0'
       - name: The mock is faithful, and honest about not settling
         run: pytest mock/test_mock_seller.py -q
 
@@ -110,7 +110,7 @@ jobs:
           python-version: "3.11"
       - run: |
           python -m pip install --upgrade pip
-          pip install pytest streamlit 'tesoro>=0.1.1' 'x402[evm,httpx]>=2.18.0'
+          pip install pytest streamlit 'tesoro>=0.1.0' 'x402[evm,httpx]>=2.18.0'
       - name: Cockpit suite
         run: pytest cockpit -q
 
@@ -152,7 +152,7 @@ jobs:
         # refusal *appears*, because it exists to show that none does.
         run: |
           python -m pip install --upgrade pip
-          pip install 'tesoro>=0.1.1'
+          pip install 'tesoro>=0.1.0'
           python usecases/run_all.py
 
   no-path-installs:
@@ -168,6 +168,44 @@ jobs:
             exit 1
           fi
           echo "every example installs tesoro from the index"
+
+  pinned-versions-exist:
+    # Every `tesoro>=X` floor must be a version PyPI actually serves.
+    #
+    # This repository pinned `tesoro>=0.1.1` while the newest release was 0.1.0, so six jobs
+    # and the usecases runner failed at `pip install` with "could not find a version that
+    # satisfies the requirement" -- nothing to do with the code under test. The pin arrived by
+    # a mechanical `aegoll` -> `tesoro` rename: `aegoll` had shipped 0.1.1, and `tesoro`
+    # restarted its version line at 0.1.0, so a correct pin became an unsatisfiable one
+    # without a single character looking wrong.
+    #
+    # A rename can move a name. It cannot move a version history.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Each pinned floor is published
+        run: |
+          bad=0
+          # Comment lines are excluded, or this job fails on the paragraph above it: that text
+          # names `tesoro>=0.1.1` to explain the defect, and the first version of this check
+          # duly reported its own documentation as an unpublished pin.
+          pins=$(grep -rhE "tesoro>=[0-9]+\.[0-9]+\.[0-9]+" \
+                   --include='*.yml' --include='*.txt' --include='*.toml' . \
+                 | grep -vE "^[[:space:]]*#" \
+                 | grep -oE "tesoro>=[0-9]+\.[0-9]+\.[0-9]+")
+          floors=$(echo "$pins" | sed 's/tesoro>=//' | sort -u)
+          echo "distinct pinned floors: $(echo $floors)"
+          for v in $floors; do
+            code=$(curl -s -o /dev/null -w '%{http_code}' "https://pypi.org/pypi/tesoro/$v/json")
+            if [ "$code" = "200" ]; then
+              echo "tesoro $v is published"
+            else
+              echo "::error::a pin requires tesoro>=$v, which PyPI does not serve (HTTP $code)"
+              bad=1
+            fi
+          done
+          [ -n "$floors" ] || { echo "::error::no tesoro pin found at all"; exit 1; }
+          exit $bad
 
   every-example-declares-tesoro:
     # The other half of the same rule. An example that never declares the

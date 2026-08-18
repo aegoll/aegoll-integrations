@@ -32,20 +32,56 @@ from typing import Any
 AEGL_AVAILABLE = False
 _IMPORT_ERROR: str | None = None
 
+# Governance and presentation are imported separately, and only the first may set
+# `AEGL_AVAILABLE`.
+#
+# They used to share one `try:` and one `except Exception`, which meant a failure anywhere in
+# `ui` -- a Streamlit module, nothing to do with governance -- turned governance **off** and
+# reported the reason as AEGL being unavailable. The observed message was
+# `ModuleNotFoundError: No module named 'streamlit'` returned from `import_error()`, i.e. the
+# cockpit ran ungoverned and blamed the layer that was in fact installed and working. A missing
+# chart library must never be able to disable a spend control.
+#
+# The two `ui` names are optional by design and every call site already guards on `is not None`,
+# so bundling them into the governance flag was wrong in both directions.
+
 try:
-    import ui as aegl_ui
-    import ui_keys as aegl_ui_keys
     from tesoro.advisors import available_models, estimate_call_cost_usd
     from tesoro.config import available_bundles
     from tesoro.plugin import NOT_RECOMMENDED, Governor
 
     AEGL_AVAILABLE = True
-except Exception as exc:  # pragma: no cover - exercised by absence
+except ModuleNotFoundError as exc:  # pragma: no cover - exercised by absence
+    # Absent is not the same as broken. `tesoro` genuinely not installed is the documented
+    # degrade-to-ungoverned path. Anything *else* missing means an installed governance layer
+    # failed to import, which is an unknown state, not an absent one -- and silently running
+    # ungoverned on an unknown state is the failure this whole file exists to avoid. Raise.
+    if (exc.name or "").split(".")[0] != "tesoro":
+        raise
     _IMPORT_ERROR = f"{type(exc).__name__}: {exc}"
-    aegl_ui = None  # type: ignore[assignment]
-    aegl_ui_keys = None  # type: ignore[assignment]
     Governor = None  # type: ignore[assignment]
     NOT_RECOMMENDED: dict[str, str] = {}  # type: ignore[no-redef]
+
+# Presentation helpers, top-level modules beside the kit. Absence degrades the *display* and
+# nothing else; it cannot reach `AEGL_AVAILABLE`.
+try:
+    import ui as aegl_ui
+    import ui_keys as aegl_ui_keys
+except ImportError as exc:  # pragma: no cover - exercised by absence
+    _UI_IMPORT_ERROR: str | None = f"{type(exc).__name__}: {exc}"
+    aegl_ui = None  # type: ignore[assignment]
+    aegl_ui_keys = None  # type: ignore[assignment]
+else:
+    _UI_IMPORT_ERROR = None
+
+
+def ui_available() -> bool:
+    """Whether the cockpit's display helpers loaded. Independent of governance."""
+    return aegl_ui is not None
+
+
+def ui_import_error() -> str | None:
+    return _UI_IMPORT_ERROR
 
 
 def available() -> bool:

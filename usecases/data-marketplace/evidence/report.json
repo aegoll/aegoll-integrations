@@ -232,7 +232,7 @@
   },
   "decisions": [
     {
-      "at": "2026-08-18T15:12:44.168513+00:00",
+      "at": "2026-08-18T17:34:28.205770+00:00",
       "verdict": "REVIEW",
       "amountUsd": "25.000000",
       "vendor": "data-co",
@@ -241,7 +241,7 @@
       "reason": "per_transaction (per call (base)) admits $10.000000 but the request is $25.000000"
     },
     {
-      "at": "2026-08-18T15:12:44.135119+00:00",
+      "at": "2026-08-18T17:34:28.177809+00:00",
       "verdict": "REVIEW",
       "amountUsd": "2.500000",
       "vendor": "data-co",
@@ -250,7 +250,7 @@
       "reason": "no rule matched; defaulting to review"
     },
     {
-      "at": "2026-08-18T15:12:44.079427+00:00",
+      "at": "2026-08-18T17:34:28.118440+00:00",
       "verdict": "APPROVE",
       "amountUsd": "0.250000",
       "vendor": "data-co",
@@ -259,7 +259,7 @@
       "reason": "micro-transaction inside all envelopes"
     },
     {
-      "at": "2026-08-18T15:12:44.025774+00:00",
+      "at": "2026-08-18T17:34:28.065250+00:00",
       "verdict": "APPROVE",
       "amountUsd": "0.050000",
       "vendor": "data-co",
@@ -268,7 +268,7 @@
       "reason": "micro-transaction inside all envelopes"
     },
     {
-      "at": "2026-08-18T15:12:43.992705+00:00",
+      "at": "2026-08-18T17:34:28.027771+00:00",
       "verdict": "APPROVE",
       "amountUsd": "0.010000",
       "vendor": "data-co",
@@ -289,7 +289,7 @@
     "caveat": "a hash chain detects edits and middle-deletions, not truncation: any prefix of a valid chain is itself valid. Closing that needs an external anchor."
   },
   "versions": {
-    "tesoro": "0.1.0",
+    "tesoro": "0.1.1",
     "aegs": "0.1"
   }
 }

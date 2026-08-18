@@ -50,7 +50,14 @@ try:
     from tesoro.plugin import NOT_RECOMMENDED, RECOMMENDED_ADVISOR, Governor  # noqa: F401
 
     TESORO_AVAILABLE = True
-except Exception as exc:  # pragma: no cover - exercised by absence
+except ModuleNotFoundError as exc:  # pragma: no cover - exercised by absence
+    # Narrowed from `except Exception`, and restricted to `tesoro` itself. The sibling shim in
+    # `cockpit_kit` caught an unrelated `ModuleNotFoundError` from a UI module and turned
+    # governance off over it. `except Exception` here would do the same for any import-time
+    # failure inside an installed `tesoro`: a broken governance layer would read as an absent
+    # one, and the agent would run ungoverned. Absent degrades; broken raises.
+    if (exc.name or "").split(".")[0] != "tesoro":
+        raise
     _IMPORT_ERROR = f"{type(exc).__name__}: {exc}"
     GovernanceRefused = RuntimeError  # type: ignore[assignment,misc]
     Governor = None  # type: ignore[assignment]

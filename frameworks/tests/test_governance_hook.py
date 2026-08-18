@@ -295,6 +295,90 @@ def test_the_cockpit_sends_exactly_the_kwargs_the_agents_declare():
         assert not missing, f"{name}.run() would reject {sorted(missing)} from the cockpit"
 
 
+def test_a_broken_governance_layer_raises_rather_than_reading_as_absent(tmp_path):
+    """Absent degrades to ungoverned. Broken must not.
+
+    The shims caught `Exception` around their `tesoro` imports, so an installed governance
+    layer that failed to import for any reason -- a missing dependency of its own, a syntax
+    error, an import-time assertion -- set `AEGL_AVAILABLE = False` and the host carried on
+    with no spend control. That is the four-states rule applied to the layer itself: *absent*
+    and *broken* are different, and only one of them is safe to continue on.
+
+    Shadowing the real package with one that raises on import is the honest way to produce the
+    broken case; monkeypatching a flag would test the flag, not the guard.
+    """
+    import subprocess
+    import textwrap
+
+    shadow = tmp_path / "shadow"
+    (shadow / "tesoro").mkdir(parents=True)
+    (shadow / "tesoro" / "__init__.py").write_text(
+        "import a_dependency_that_is_not_installed", encoding="utf-8"
+    )
+
+    code = textwrap.dedent(
+        """
+        import sys
+        sys.path.insert(0, sys.argv[1])   # the broken tesoro, ahead of the real one
+        sys.path.insert(0, sys.argv[2])   # cockpit_kit
+        try:
+            from cockpit_kit import governance
+        except ModuleNotFoundError as exc:
+            print("RAISED", exc.name)
+        else:
+            print("DEGRADED", governance.available(), governance.import_error())
+        """
+    )
+    done = subprocess.run(
+        [sys.executable, "-c", code, str(shadow), str(COCKPIT_KIT.parent)],
+        capture_output=True,
+        text=True,
+        timeout=120,
+    )
+    out = done.stdout.strip()
+    assert out.startswith("RAISED"), f"a broken tesoro was treated as absent: {out or done.stderr}"
+    assert "a_dependency_that_is_not_installed" in out
+
+
+def test_the_governance_shim_imports_without_the_ui_framework():
+    """The shim must not drag Streamlit in.
+
+    `cockpit_kit/__init__.py` used to import `.app` eagerly, so importing the governance
+    shim required Streamlit -- and the test below, which proves a cockpit degrades to
+    ungoverned rather than crashing, could not run in the `decoupling` CI job at all. It
+    errored on a missing UI dependency and read as a governance failure.
+
+    Run in a subprocess because the check is *what got imported*, and this process has
+    already imported plenty. Asserting on `sys.modules` in-process would pass or fail on
+    test ordering.
+    """
+    import subprocess
+
+    code = (
+        "import sys; sys.path.insert(0, %r);"
+        "from cockpit_kit import governance;"
+        "assert 'streamlit' not in sys.modules, sorted(m for m in sys.modules if 'stream' in m);"
+        "assert hasattr(governance, 'AEGL_AVAILABLE');"
+        "print('clean')" % str(COCKPIT_KIT.parent)
+    )
+    done = subprocess.run(
+        [sys.executable, "-c", code], capture_output=True, text=True, timeout=120
+    )
+    assert done.returncode == 0, done.stderr
+    assert "clean" in done.stdout
+
+
+def test_the_lazy_names_still_resolve():
+    """Laziness must not remove the public surface it was hiding."""
+    sys.path.insert(0, str(COCKPIT_KIT.parent))
+    pytest.importorskip("streamlit", reason="build_cockpit needs the UI framework by design")
+    import cockpit_kit
+
+    assert callable(cockpit_kit.build_cockpit)
+    assert callable(cockpit_kit.stream_agent)
+    assert "build_cockpit" in dir(cockpit_kit)
+
+
 def test_the_cockpit_shim_degrades_when_aegl_is_absent(monkeypatch):
     """A cockpit must run ungoverned if AEGL is not installed, not crash."""
     sys.path.insert(0, str(COCKPIT_KIT.parent))
