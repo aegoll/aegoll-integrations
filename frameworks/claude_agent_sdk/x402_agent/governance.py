@@ -2,50 +2,65 @@
 
 This used to be 409 lines of glue: its own `GovernanceLayer`, its own event
 dataclass, its own decision-to-dict translation. All of that now lives in
-`aegl.plugin` — because it was never Claude-specific, and while it sat here the
+`aegoll.plugin` — because it was never Claude-specific, and while it sat here the
 other two agents could not use it.
 
-What is left is the only genuinely host-shaped concern: **AEGL is optional**. If
-`aegl` is not importable, this cockpit runs exactly as it did before governance
+What is left is the only genuinely host-shaped concern: **aegoll is optional**. If
+`aegoll` is not importable, this cockpit runs exactly as it did before governance
 existed. That keeps the governance layer a layer rather than a dependency, and it
-is why `AEGL_AVAILABLE` is checked rather than assumed.
+is why `AEGOLL_AVAILABLE` is checked rather than assumed.
 
 The catalogue helpers below are thin passthroughs so `app.py` and `byok_ui.py`
 have one import site to reach for, and degrade to empty lists rather than raising
-when AEGL is absent. They add no behaviour of their own.
+when aegoll is absent. They add no behaviour of their own.
 """
 
 from __future__ import annotations
 
-import sys
-from pathlib import Path
 from typing import Any
 
-# aegl lives beside `agents/` in the repo; neither is a published package.
-_AEGL_DIR = Path(__file__).resolve().parents[3] / "aegl"
+# `aegoll` is an installed package, found the way any consumer finds it:
+#
+#     pip install aegoll
+#
+# The prototype did
+#
+#     _AEGL_DIR = Path(__file__).resolve().parents[3] / "aegl"
+#     sys.path.insert(0, str(_AEGL_DIR))
+#
+# because the layer sat beside `agents/` in one repository and neither was published. That
+# path resolves to nothing here, so the import failed, `AEGL_AVAILABLE` stayed False, and
+# **this agent ran ungoverned** -- silently, because absence is a supported state. Nothing
+# failed and no test noticed, which is PLAN.md F-C1 for the third time: a path that resolves
+# to nothing does not raise, it just quietly means "no".
+#
+# An example that only works from one checkout layout is not an example.
 
-AEGL_AVAILABLE = False
+AEGOLL_AVAILABLE = False
 _IMPORT_ERROR: str | None = None
 
 try:
-    if str(_AEGL_DIR) not in sys.path:
-        sys.path.insert(0, str(_AEGL_DIR))
-    from aegl.adapters.x402_python import GovernanceRefused  # noqa: E402,F401
-    from aegl.advisors import (  # noqa: E402
+    from aegoll.adapters.x402_python import GovernanceRefused  # noqa: F401
+    from aegoll.advisors import (
         available_models,
         estimate_call_cost_usd,
         providers as advisor_providers,
     )
-    from aegl.config import available_bundles  # noqa: E402
-    from aegl.plugin import NOT_RECOMMENDED, RECOMMENDED_ADVISOR, Governor  # noqa: E402,F401
+    from aegoll.config import available_bundles
+    from aegoll.plugin import NOT_RECOMMENDED, RECOMMENDED_ADVISOR, Governor  # noqa: F401
 
-    AEGL_AVAILABLE = True
+    AEGOLL_AVAILABLE = True
 except Exception as exc:  # pragma: no cover - exercised by absence
     _IMPORT_ERROR = f"{type(exc).__name__}: {exc}"
     GovernanceRefused = RuntimeError  # type: ignore[assignment,misc]
     Governor = None  # type: ignore[assignment]
     NOT_RECOMMENDED: dict[str, str] = {}  # type: ignore[no-redef]
     RECOMMENDED_ADVISOR = None  # type: ignore[assignment]
+
+#: The old name, kept so a reader of the prototype's code finds what they expect. Governance
+#: being optional is deliberate and stays; what changed is that its absence now means the
+#: package is not installed, rather than a hardcoded path having gone stale.
+AEGL_AVAILABLE = AEGOLL_AVAILABLE
 
 
 def import_error() -> str | None:

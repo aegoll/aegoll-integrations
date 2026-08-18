@@ -89,17 +89,21 @@ async def _main() -> int:
         print(f"seller {cfg.data_api_url}  |  usdc cap ${cfg.usdc_cap_usd}")
         print("-" * 72)
 
-    # AEGL is imported *here*, not by any agent: the agents take a governor, they
-    # never reach for one. `run_agent.py` is the host that supplies it.
+    # `aegoll` is imported *here*, not by any agent: the agents take a governor, they
+    # never reach for one. `run_agent.py` is the host that supplies it, which is the
+    # inverted dependency the whole design turns on.
+    #
+    # Installed from PyPI, not found by a path. The `sys.path.insert` this replaces
+    # pointed at a sibling `aegl/` that does not exist in this repository, so `--govern`
+    # raised ModuleNotFoundError rather than governing anything.
     governor = None
     if args.govern:
-        sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "aegl"))
-        from aegl.plugin import Governor  # noqa: PLC0415
+        from aegoll.plugin import Governor  # noqa: PLC0415
 
         governor = Governor(policy=args.policy, framework=module.FRAMEWORK)
         if not args.json:
             spec = governor.advisor_spec
-            print(f"aegl        : policy {governor.bundle.name} "
+            print(f"aegoll      : policy {governor.bundle.name} "
                   f"({governor.bundle.hash[:8]})  advisor "
                   f"{'/'.join(spec) if spec else 'deterministic only'}")
 
@@ -127,7 +131,7 @@ async def _main() -> int:
         elif kind == "error" and not args.json:
             print(f"  [error] {event['message']}", file=sys.stderr)
         elif kind == "governance_stop" and not args.json:
-            print(f"  [aegl] {event['detail'].get('reason', 'spend ceiling reached')}")
+            print(f"  [aegoll] {event['detail'].get('reason', 'spend ceiling reached')}")
         elif kind == "done":
             final = event
 

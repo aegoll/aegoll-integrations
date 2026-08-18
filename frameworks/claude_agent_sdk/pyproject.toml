@@ -4,6 +4,9 @@ version = "0.1.0"
 description = "Claude Agent SDK buyer that pays for x402 market data, with a Streamlit cockpit"
 requires-python = ">=3.11"
 dependencies = [
+    # The governance layer, from PyPI. An example that only works from a
+    # particular checkout layout is not an example.
+    "aegoll>=0.1.0",
     "claude-agent-sdk>=0.1.0",
     "x402[evm,httpx]>=2.18.0",
     "streamlit>=1.40",

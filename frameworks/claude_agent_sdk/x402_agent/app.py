@@ -53,7 +53,7 @@ from x402_agent.config import (  # noqa: E402
     load_config,
 )
 from x402_agent.governance import (  # noqa: E402
-    AEGL_AVAILABLE,
+    AEGOLL_AVAILABLE,
     advisor_catalogue,
     advisor_cost,
     advisor_warning,
@@ -63,12 +63,18 @@ from x402_agent.governance import (  # noqa: E402
     list_policies,
 )
 
-# The panel ships with the governance layer, not with this cockpit -- same
-# `render()` in every host. Imported lazily-ish: only meaningful when AEGL is
-# importable, and `governance.py` has already put it on the path by here.
-if AEGL_AVAILABLE:
-    from aegl import ui as aegl_ui  # noqa: E402
-    from aegl import ui_keys as aegl_ui_keys  # noqa: E402
+# The panels used to ship *inside* the governance layer, as `aegl.ui`. They no longer do:
+# the package shed every UI module when it stopped depending on Streamlit (PLAN.md A2), so
+# `aegoll` has no `ui` at all and this import could never have succeeded against the
+# published package. They live in this repository now, under `cockpit/`, which is where a
+# demo surface belongs -- a library that governs payments should not carry a web framework.
+if AEGOLL_AVAILABLE:
+    try:
+        import ui as aegl_ui  # noqa: E402  -- from cockpit/, put on the path by conftest
+        import ui_keys as aegl_ui_keys  # noqa: E402
+    except ImportError:  # pragma: no cover - the panels are optional, the governance is not
+        aegl_ui = None
+        aegl_ui_keys = None
 else:  # pragma: no cover - exercised by absence
     aegl_ui = None
     aegl_ui_keys = None
@@ -297,7 +303,7 @@ if AEGL_AVAILABLE:
     if advisor_spec:
         _warn = advisor_warning(advisor_spec[1])
         if _warn:
-            # Measured, not guessed -- see aegl/EVAL.md.
+            # Measured, not guessed -- see the aegoll repository's docs/eval.md.
             st.sidebar.warning(f"**Not recommended.** {_warn}")
         _c = advisor_cost(advisor_spec[1])
         st.sidebar.caption(
@@ -313,7 +319,7 @@ else:
     governance_on = False
     governance_policy = None
     advisor_spec = None
-    st.sidebar.warning(f"aegl not importable: {import_error()}")
+    st.sidebar.warning(f"aegoll not installed: {import_error()}")
 
 st.sidebar.divider()
 spent_total = total_llm_spend_usd()

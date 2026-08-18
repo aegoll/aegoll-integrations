@@ -124,9 +124,8 @@ def _load(framework: str) -> Any:
 
 
 def _build_governor(framework: str, policy: str | None) -> Any:
-    """A `Governor` for this cell, or None if AEGL is not importable."""
-    sys.path.insert(0, str(HERE.parent / "aegl"))
-    from aegl.plugin import Governor  # noqa: PLC0415
+    """A `Governor` for this cell, or None if `aegoll` is not installed."""
+    from aegoll.plugin import Governor  # noqa: PLC0415
 
     return Governor(policy=policy, advisor=None, framework=framework)
 
@@ -270,7 +269,7 @@ def _fmt_compare(cells: list[Cell]) -> str:
         "",
         "  Read the overhead column carefully: it is the *model's* run-to-run variance,",
         "  not the layer's cost. AEGL's decisions are deterministic and invoke no model.",
-        "  Measured separately (`aegl.cli bench -n 3000`): **p50 128 us, p99 211 us, $0**.",
+        "  Measured separately (`aegoll bench -n 3000`): **p50 128 us, p99 211 us, $0**.",
         f"  This sweep made {decided} governed decision(s) — roughly "
         f"{decided * 0.128:.1f} ms of compute and no tokens at all.",
         "",

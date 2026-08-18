@@ -9,10 +9,16 @@ methods on whatever they are given:
     check_spend(spent_usd)                         -> has .should_stop
     settle_run(actual_cost_usd)
 
-`aegl.plugin.Governor` satisfies that, and so could anything else. Keeping it
-structural is the point: if the agents imported `aegl`, "AEGL is a plugin you can
-install" would be indistinguishable from "AEGL is a dependency these agents were
-built around". `tests/test_decoupling.py` asserts the import never appears.
+`aegoll.plugin.Governor` satisfies that, and so could anything else. Keeping it
+structural is the point: if the agents imported `aegoll`, "a plugin you can install"
+would be indistinguishable from "a dependency these agents were built around".
+`tests/test_decoupling.py` asserts the import never appears.
+
+`aegoll.adapters.base.RunGuard` is now the same contract, shipped in the package. This
+copy stays for the moment because it drives the older four-call plugin surface that the
+three agents already use, and migrating them is its own change -- but two implementations
+of one contract will drift, so it is recorded in PLAN.md as C3's first task rather than
+left to be discovered.
 
 `RunGuard(None)` is inert, so an ungoverned run costs one attribute check per step
 and behaves exactly as it did before.
