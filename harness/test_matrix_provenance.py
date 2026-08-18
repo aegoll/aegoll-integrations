@@ -55,7 +55,7 @@ def test_every_measurement_carries_its_provenance():
 
     stamp = matrix.provenance()
 
-    assert stamp["aegoll"], "no implementation version"
+    assert stamp["tesoro"], "no implementation version"
     assert stamp["aegs"], "no specification version"
     assert stamp["measuredAt"].endswith("+00:00"), "not UTC, so not comparable across runs"
 
@@ -76,7 +76,7 @@ def test_the_stamp_changes_when_the_policy_changes(tmp_path, monkeypatch):
     import matrix
     from importlib import resources
 
-    original = (resources.files("aegoll") / "policies" / "default.yaml").read_text(
+    original = (resources.files("tesoro") / "policies" / "default.yaml").read_text(
         encoding="utf-8"
     )
     edited = original.replace('daily_usd: "50"', 'daily_usd: "49"')

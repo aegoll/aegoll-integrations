@@ -1,6 +1,6 @@
 """Governance is optional by design, and absent by accident is a different thing.
 
-Every agent here runs ungoverned if `aegoll` is not importable, and that is deliberate — it
+Every agent here runs ungoverned if `tesoro` is not importable, and that is deliberate — it
 is what makes the layer a *layer* rather than a dependency. The cost of that design is this:
 **absence is indistinguishable from breakage** unless something checks.
 
@@ -13,7 +13,7 @@ suite was green.
 That is PLAN.md F-C1 for the third time: a path that resolves to nothing does not raise, it
 quietly means *no*.
 
-So these tests assert the **positive**: with `aegoll` installed, governance is live. They are
+So these tests assert the **positive**: with `tesoro` installed, governance is live. They are
 the reason the ungoverned state cannot come back silently — and they fail loudly rather than
 skip, because a skip here would reproduce exactly the failure they exist to catch.
 """
@@ -32,40 +32,40 @@ for sub in ("claude_agent_sdk", "x402_core"):
         sys.path.insert(0, p)
 
 
-def test_aegoll_is_installed():
+def test_tesoro_is_installed():
     """The premise of every test below. From PyPI, not from a sibling checkout.
 
     Two version lines, because they answer different questions: `__version__` is what the
     implementation is, and the AEGS version is which specification it implements. A record
     carrying only the first cannot be audited later.
 
-    The spec version is read from `aegoll.record` rather than the top level, because **0.1.0
-    shipped without exporting it** -- `aegoll.AEGS_VERSION` raises `AttributeError` even though
+    The spec version is read from `tesoro.record` rather than the top level, because **0.1.0
+    shipped without exporting it** -- `tesoro.AEGS_VERSION` raises `AttributeError` even though
     PLAN.md W0.7 claims it. Found by this test, on its first run. Tighten this to the top-level
     name once 0.1.1 is out; asserting it now would be asserting against a package that does not
     exist yet.
     """
-    import aegoll
-    from aegoll.record import AEGS_VERSION
+    import tesoro
+    from tesoro.record import AEGS_VERSION
 
-    assert aegoll.__version__, "aegoll is importable but reports no version"
+    assert tesoro.__version__, "tesoro is importable but reports no version"
     assert AEGS_VERSION, "no specification version"
 
 
-def test_aegoll_is_not_being_imported_from_a_sibling_checkout():
+def test_tesoro_is_not_being_imported_from_a_sibling_checkout():
     """An example that only works from one directory layout is not an example.
 
     The whole defect this file exists for came from resolving a path instead of installing a
-    package. If the import is satisfied by `../aegoll/src`, these tests would pass here and
+    package. If the import is satisfied by `../tesoro/src`, these tests would pass here and
     fail for every user — which is the same class of lie, one level up.
     """
-    import aegoll
+    import tesoro
 
-    location = Path(aegoll.__file__).resolve()
+    location = Path(tesoro.__file__).resolve()
     repo_parent = Path(__file__).resolve().parents[2]
     assert repo_parent not in location.parents, (
-        f"aegoll is being imported from {location}, inside the workspace at {repo_parent}. "
-        "Install it (`pip install aegoll`) rather than reaching for a checkout."
+        f"tesoro is being imported from {location}, inside the workspace at {repo_parent}. "
+        "Install it (`pip install tesoro`) rather than reaching for a checkout."
     )
 
 
@@ -73,7 +73,7 @@ def test_the_claude_agent_reports_governance_as_available():
     """The exact assertion whose absence let the agent run ungoverned."""
     from x402_agent import governance
 
-    assert governance.AEGOLL_AVAILABLE is True, (
+    assert governance.TESORO_AVAILABLE is True, (
         f"governance is not available, so this agent runs ungoverned: "
         f"{governance.import_error()}"
     )
@@ -102,8 +102,8 @@ def test_a_governor_actually_refuses_something():
 
     governor = Governor(policy="default", advisor=None)
     try:
-        decision = governor.aegoll.decide(
-            governor.aegoll.build_request(
+        decision = governor.tesoro.decide(
+            governor.tesoro.build_request(
                 resource="/expensive",
                 amount_usd="5000",
                 vendor=_a_vendor(),
@@ -131,6 +131,6 @@ def test_the_run_guard_is_inert_without_a_governor():
 
 
 def _a_vendor():
-    from aegoll import Vendor
+    from tesoro import Vendor
 
     return Vendor(id="test-seller", name="test-seller")

@@ -35,11 +35,11 @@ from dataclasses import dataclass, field
 from datetime import datetime, timedelta, timezone
 from typing import Any, Callable
 
-from aegoll.advise import consult
-from aegoll.clock import FixedClock
-from aegoll.config import PolicyBundle, load_bundle
-from aegoll.domain import Purpose, Vendor, Verdict
-from aegoll.runtime import Aegoll, Paths
+from tesoro.advise import consult
+from tesoro.clock import FixedClock
+from tesoro.config import PolicyBundle, load_bundle
+from tesoro.domain import Purpose, Vendor, Verdict
+from tesoro.runtime import Tesoro, Paths
 from scenarios import (
     KNOWN_VENDOR,
     POC_VENDOR,
@@ -48,7 +48,7 @@ from scenarios import (
     seed_thin_history,
     seed_trusted_vendor,
 )
-from aegoll.store import Store
+from tesoro.store import Store
 
 BASE_TIME = datetime(2026, 8, 14, 12, 0, tzinfo=timezone.utc)
 
@@ -373,7 +373,7 @@ def run_case(
     the advice, not whether the gate would have paid for it. Gate behaviour is
     measured separately by the EIAP tests.
     """
-    aegoll = Aegoll(
+    tesoro = Tesoro(
         bundle=bundle or load_bundle(),
         paths=Paths.ephemeral(f"{root}/{case.key}"),
         clock=FixedClock(BASE_TIME),
@@ -381,16 +381,16 @@ def run_case(
     )
     try:
         if case.seed:
-            case.seed(aegoll.store, BASE_TIME)
+            case.seed(tesoro.store, BASE_TIME)
 
-        request = aegoll.build_request(
+        request = tesoro.build_request(
             resource=case.resource,
             amount_usd=case.amount_usd,
             vendor=case.vendor,
             purpose=Purpose.DATA_PURCHASE,
             request_id=f"eval-{case.key}",
         )
-        decision = aegoll.decide(request)
+        decision = tesoro.decide(request)
 
         if advisor is None:
             return CaseResult(case, decision.verdict.value, decision.verdict.value)
@@ -401,7 +401,7 @@ def run_case(
             advisor,
             vendor_description=CATALOG_TEXT.get(case.resource, ""),
             force=True,
-            snapshot=aegoll.snapshot_for(request, decision.decided_at),
+            snapshot=tesoro.snapshot_for(request, decision.decided_at),
         )
         return CaseResult(
             case,
@@ -411,7 +411,7 @@ def run_case(
             consulted=advised.consulted,
         )
     finally:
-        aegoll.close()
+        tesoro.close()
 
 
 def evaluate_advisor(
@@ -422,7 +422,7 @@ def evaluate_advisor(
     """Run the whole labelled set against one advisor (or none, for the baseline)."""
     advisor = None
     if provider and model:
-        from aegoll.advisors import build_advisor
+        from tesoro.advisors import build_advisor
 
         advisor = build_advisor(provider, model)
         ok, detail = advisor.available()

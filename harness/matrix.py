@@ -147,8 +147,8 @@ def _load(framework: str) -> Any:
 
 
 def _build_governor(framework: str, policy: str | None) -> Any:
-    """A `Governor` for this cell, or None if `aegoll` is not installed."""
-    from aegoll.plugin import Governor  # noqa: PLC0415
+    """A `Governor` for this cell, or None if `tesoro` is not installed."""
+    from tesoro.plugin import Governor  # noqa: PLC0415
 
     return Governor(policy=policy, advisor=None, framework=framework)
 
@@ -163,7 +163,7 @@ def provenance(policy: str | None = None) -> dict[str, Any]:
 
     Four things, each answering a question somebody asks later:
 
-    * `aegoll` — which implementation produced it. Behaviour changed between 0.1.0 and 0.1.1.
+    * `tesoro` — which implementation produced it. Behaviour changed between 0.1.0 and 0.1.1.
     * `aegs` — which specification version's rules it was scored against.
     * `policy` — the pack's **content hash**, not just its name. A label can be reused across
       edited rules; a hash cannot, which is why the schema prefers it.
@@ -172,13 +172,13 @@ def provenance(policy: str | None = None) -> dict[str, Any]:
     Raises rather than degrading if the policy cannot be loaded. A stamp with a hole in it invites
     exactly the interpretation it exists to prevent.
     """
-    import aegoll
-    from aegoll.config import load_bundle
-    from aegoll.record import AEGS_VERSION
+    import tesoro
+    from tesoro.config import load_bundle
+    from tesoro.record import AEGS_VERSION
 
     bundle = load_bundle(policy) if policy else load_bundle()
     return {
-        "aegoll": aegoll.__version__,
+        "tesoro": tesoro.__version__,
         "aegs": AEGS_VERSION,
         "policy": {"name": bundle.name, "hash": bundle.hash},
         "measuredAt": datetime.now(timezone.utc).isoformat(),
@@ -324,7 +324,7 @@ def _fmt_compare(cells: list[Cell]) -> str:
         "",
         "  Read the overhead column carefully: it is the *model's* run-to-run variance,",
         "  not the layer's cost. AEGL's decisions are deterministic and invoke no model.",
-        "  Measured separately (`aegoll bench -n 3000`, ten runs): **p50 ~170 us and $0**,",
+        "  Measured separately (`tesoro bench -n 3000`, ten runs): **p50 ~170 us and $0**,",
         "  where p50 ranged 139-330 us across identical runs. The spread is machine load,",
         "  not the layer -- see EXP-007. A single figure here would be over-precise.",
         f"  This sweep made {decided} governed decision(s) — roughly "
@@ -430,7 +430,7 @@ async def _main() -> int:
         return 0
 
     stamp = provenance(args.policy)
-    print(f"\n  aegoll {stamp['aegoll']}   AEGS {stamp['aegs']}   "
+    print(f"\n  tesoro {stamp['tesoro']}   AEGS {stamp['aegs']}   "
           f"policy {stamp['policy']['name']} {stamp['policy']['hash'][:12]}")
     print("\n" + _fmt_matrix(cells))
     if args.compare:

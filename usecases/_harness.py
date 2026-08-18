@@ -39,7 +39,7 @@ def policy(**overrides: str) -> str:
     """
     import re
 
-    text = (resources.files("aegoll") / "policies" / "default.yaml").read_text(encoding="utf-8")
+    text = (resources.files("tesoro") / "policies" / "default.yaml").read_text(encoding="utf-8")
     for key, value in overrides.items():
         # Money is quoted in the pack (`daily_usd: "50"`) because it is a decimal string and must
         # never become a float; counts are not (`velocity_60s: 10`). Both are overridable, and
@@ -73,13 +73,13 @@ class Story:
         packs = self._dir / "policies"
         packs.mkdir()
         (packs / "case.yaml").write_text(pack or policy(), encoding="utf-8")
-        (self._dir / "aegoll.yaml").write_text(
+        (self._dir / "tesoro.yaml").write_text(
             "\n".join(
                 [
                     "profile: aegs-1",
                     "policy: policies/case.yaml",
                     "evidence:",
-                    "  journal: .aegoll/audit.jsonl",
+                    "  journal: .tesoro/audit.jsonl",
                     "",
                 ]
             ),
@@ -89,7 +89,7 @@ class Story:
         import os
 
         os.chdir(self._dir)
-        from aegoll import Governor
+        from tesoro import Governor
 
         self.gov = Governor.load()
 
@@ -201,7 +201,7 @@ class Story:
         (out / "report.json").write_text(
             json.dumps(report.as_dict(), indent=2), encoding="utf-8"
         )
-        journal = self._dir / ".aegoll" / "audit.jsonl"
+        journal = self._dir / ".tesoro" / "audit.jsonl"
         if journal.is_file():
             shutil.copy2(journal, out / "audit.jsonl")
         return out

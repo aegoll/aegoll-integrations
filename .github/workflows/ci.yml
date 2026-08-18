@@ -9,7 +9,7 @@ on:
 # settlement is a separate, manually triggered workflow -- CI must never spend
 # money or need a wallet.
 #
-# Every job below installs `aegoll` from PyPI. That is not incidental: the agents
+# Every job below installs `tesoro` from PyPI. That is not incidental: the agents
 # in this repository ran with **no governance at all** for a whole commit because
 # one module resolved a path to a sibling `aegl/` that does not exist here, and
 # absence is a supported state. See PLAN.md F-C1 and the governance-is-present
@@ -36,13 +36,13 @@ jobs:
       - name: Install
         run: |
           python -m pip install --upgrade pip
-          pip install pytest 'aegoll>=0.1.1' 'x402[evm,httpx]>=2.18.0'
+          pip install pytest 'tesoro>=0.1.1' 'x402[evm,httpx]>=2.18.0'
       - name: Offline suite
         run: pytest frameworks/tests harness mock -q
 
   governance-is-live:
     # The single most important job in this file, and the one whose absence let
-    # every agent run ungoverned. It asserts the *positive*: aegoll installed,
+    # every agent run ungoverned. It asserts the *positive*: tesoro installed,
     # governance reporting available, real policies visible, and a governor that
     # actually refuses a payment with an attributed control.
     #
@@ -56,7 +56,7 @@ jobs:
           python-version: "3.11"
       - run: |
           python -m pip install --upgrade pip
-          pip install pytest 'aegoll>=0.1.1' 'x402[evm,httpx]>=2.18.0'
+          pip install pytest 'tesoro>=0.1.1' 'x402[evm,httpx]>=2.18.0'
       - name: Governance is present, and refuses something
         run: pytest frameworks/tests/test_governance_is_present.py mock/test_governed_run.py -q
 
@@ -73,7 +73,7 @@ jobs:
           python-version: "3.11"
       - run: |
           python -m pip install --upgrade pip
-          pip install pytest 'aegoll>=0.1.1' 'x402[evm,httpx]>=2.18.0'
+          pip install pytest 'tesoro>=0.1.1' 'x402[evm,httpx]>=2.18.0'
       - name: Decoupling
         run: pytest frameworks/tests/test_decoupling.py frameworks/tests/test_governance_hook.py -q
 
@@ -90,7 +90,7 @@ jobs:
           python-version: "3.11"
       - run: |
           python -m pip install --upgrade pip
-          pip install pytest 'aegoll>=0.1.1' 'x402[evm,httpx]>=2.18.0'
+          pip install pytest 'tesoro>=0.1.1' 'x402[evm,httpx]>=2.18.0'
       - name: The mock is faithful, and honest about not settling
         run: pytest mock/test_mock_seller.py -q
 
@@ -110,7 +110,7 @@ jobs:
           python-version: "3.11"
       - run: |
           python -m pip install --upgrade pip
-          pip install pytest streamlit 'aegoll>=0.1.1' 'x402[evm,httpx]>=2.18.0'
+          pip install pytest streamlit 'tesoro>=0.1.1' 'x402[evm,httpx]>=2.18.0'
       - name: Cockpit suite
         run: pytest cockpit -q
 
@@ -152,36 +152,36 @@ jobs:
         # refusal *appears*, because it exists to show that none does.
         run: |
           python -m pip install --upgrade pip
-          pip install 'aegoll>=0.1.1'
+          pip install 'tesoro>=0.1.1'
           python usecases/run_all.py
 
   no-path-installs:
-    # Every example pins aegoll from PyPI. An example that only works from a
+    # Every example pins tesoro from PyPI. An example that only works from a
     # local checkout is not an example. (PLAN.md C0.3)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: No editable or path installs of aegoll
+      - name: No editable or path installs of tesoro
         run: |
-          if grep -rnE '(-e[[:space:]]+\.\.|file:|\.\./aegoll)' --include=requirements*.txt --include=pyproject.toml . ; then
-            echo "::error::example installs aegoll from a path, not PyPI"
+          if grep -rnE '(-e[[:space:]]+\.\.|file:|\.\./tesoro)' --include=requirements*.txt --include=pyproject.toml . ; then
+            echo "::error::example installs tesoro from a path, not PyPI"
             exit 1
           fi
-          echo "every example installs aegoll from the index"
+          echo "every example installs tesoro from the index"
 
-  every-example-declares-aegoll:
+  every-example-declares-tesoro:
     # The other half of the same rule. An example that never declares the
     # governance layer will import whatever happens to be on the path, which is
     # how this repository ended up ungoverned without noticing.
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Each pyproject declares aegoll
+      - name: Each pyproject declares tesoro
         run: |
           missing=0
           for f in $(find . -name pyproject.toml -not -path './.git/*'); do
-            if ! grep -q 'aegoll' "$f"; then
-              echo "::error file=$f::does not declare aegoll"
+            if ! grep -q 'tesoro' "$f"; then
+              echo "::error file=$f::does not declare tesoro"
               missing=1
             fi
           done

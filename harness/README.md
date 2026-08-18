@@ -20,7 +20,7 @@ python harness/matrix.py --compare      # governed against ungoverned, side by s
 ```json
 {
   "provenance": {
-    "aegoll": "0.1.1",
+    "tesoro": "0.1.1",
     "aegs": "0.1",
     "policy": {"name": "default", "hash": "a5a64aeb69dbc5f9206b31022064da26"},
     "measuredAt": "2026-08-18T13:56:47+00:00"
@@ -61,7 +61,7 @@ call: providers vary by time of day, by region, by load, and by silent model upd
 reconciled by the provider, not here.
 
 **Latency includes the network.** The layer's own decision latency is measured separately, and
-is worth quoting carefully: ten runs of `aegoll bench -n 3000` against published `aegoll` 0.1.1
+is worth quoting carefully: ten runs of `tesoro bench -n 3000` against published `tesoro` 0.1.1
 gave a p50 **median of ~170 µs** with a range of **139–330 µs** — a 2.4× spread from machine load
 alone ([EXP-007](https://github.com/aegoll/aegs/tree/main/research/experiments/EXP-007)).
 
@@ -78,7 +78,7 @@ appear in the output and in `limits.failedCells`.
 **Nothing here is a benchmark against another product.** There is no comparison to a competing
 governance layer, because no independent implementation of AEGS has been scored — which is the
 project's largest open question and is
-[W6.4](https://github.com/aegoll/aegoll-integrations/blob/main/PLAN.md), not something a sweep
+[W6.4](https://github.com/aegoll/tesoro-integrations/blob/main/PLAN.md), not something a sweep
 can answer.
 
 ## Two things that were broken here

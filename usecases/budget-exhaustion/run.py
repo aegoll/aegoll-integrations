@@ -32,7 +32,7 @@ def story(case: Story) -> int:
     case.say("the way on purpose -- the first draft of this case hit *that* instead, and")
     case.say("narrated a day running out when what actually happened was a rate limit.")
 
-    from aegoll.adapters.base import RunGuard
+    from tesoro.adapters.base import RunGuard
 
     case.heading("1. two ceilings guard a run, and they are not the same ceiling")
     case.say("  run budget : what this caller declared for this run")

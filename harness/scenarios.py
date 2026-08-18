@@ -1,4 +1,4 @@
-"""The four required scenarios from `docs/archive/2026-08-aegoll-original-research-prompt.md`, plus a deterministic runner.
+"""The four required scenarios from `docs/archive/2026-08-tesoro-original-research-prompt.md`, plus a deterministic runner.
 
 **Honest labelling matters here.** The x402 seller in this repo sells $0.001-$0.01,
 so only Scenario A can run against a real 402 and a real settlement. B, C and D use
@@ -12,11 +12,11 @@ from dataclasses import dataclass, field
 from datetime import datetime, timedelta, timezone
 from typing import Any, Callable
 
-from aegoll.clock import FixedClock
-from aegoll.config import PolicyBundle, load_bundle
-from aegoll.runtime import Aegoll, Paths
-from aegoll.store import Store
-from aegoll.domain import Decision, Purpose, Vendor, Verdict
+from tesoro.clock import FixedClock
+from tesoro.config import PolicyBundle, load_bundle
+from tesoro.runtime import Tesoro, Paths
+from tesoro.store import Store
+from tesoro.domain import Decision, Purpose, Vendor, Verdict
 
 # A fixed instant so every scenario run is byte-identical.
 BASE_TIME = datetime(2026, 8, 12, 14, 30, tzinfo=timezone.utc)
@@ -264,16 +264,16 @@ def run_scenario(
     root: str = ".data-scenarios",
 ) -> ScenarioResult:
     clock = FixedClock(BASE_TIME)
-    aegoll = Aegoll(
+    tesoro = Tesoro(
         bundle=bundle or load_bundle(),
         paths=Paths.ephemeral(root),
         clock=clock,
     )
     try:
         if scenario.seed:
-            scenario.seed(aegoll.store, BASE_TIME)
+            scenario.seed(tesoro.store, BASE_TIME)
 
-        request = aegoll.build_request(
+        request = tesoro.build_request(
             resource=scenario.resource,
             amount_usd=scenario.amount_usd,
             vendor=scenario.vendor,
@@ -281,7 +281,7 @@ def run_scenario(
             request_id=f"scenario-{scenario.key}",
             expected_value_usd=scenario.expected_value_usd,
         )
-        decision = aegoll.decide(request)
+        decision = tesoro.decide(request)
 
         notes: list[str] = []
         if not scenario.live:
@@ -301,7 +301,7 @@ def run_scenario(
             notes=notes,
         )
     finally:
-        aegoll.close()
+        tesoro.close()
 
 
 def run_all(bundle: PolicyBundle | None = None) -> list[ScenarioResult]:

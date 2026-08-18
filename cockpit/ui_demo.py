@@ -1,8 +1,8 @@
 """The drop-in panel, on its own, with no agent and no framework.
 
 ```powershell
-cd D:\\learning-poc\\x402\\aegoll
-.venv\\Scripts\\streamlit run aegoll\\ui_demo.py --server.port 8505 --server.address 127.0.0.1
+cd D:\\learning-poc\\x402\\tesoro
+.venv\\Scripts\\streamlit run tesoro\\ui_demo.py --server.port 8505 --server.address 127.0.0.1
 ```
 
 This is what "the UI is a plugin too" means in practice: a governance panel that
@@ -25,8 +25,8 @@ import streamlit as st
 if str(Path(__file__).resolve().parents[1]) not in sys.path:
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-import ui as aegoll_ui  # noqa: E402
-from aegoll.plugin import Governor  # noqa: E402
+import ui as tesoro_ui  # noqa: E402
+from tesoro.plugin import Governor  # noqa: E402
 
 
 class DemoQuote:
@@ -118,7 +118,7 @@ async def simulate() -> dict:
 report = asyncio.run(simulate())
 
 # --- the entire integration -----------------------------------------------
-aegoll_ui.render(report)
+tesoro_ui.render(report)
 
 with st.expander("The payload behind this panel"):
     st.caption(

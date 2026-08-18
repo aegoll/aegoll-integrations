@@ -230,7 +230,7 @@
   },
   "decisions": [
     {
-      "at": "2026-08-18T13:21:06.863440+00:00",
+      "at": "2026-08-18T15:12:49.785795+00:00",
       "verdict": "APPROVE",
       "amountUsd": "0.001000",
       "vendor": "data-co",
@@ -239,7 +239,7 @@
       "reason": "micro-transaction inside all envelopes"
     },
     {
-      "at": "2026-08-18T13:21:06.808929+00:00",
+      "at": "2026-08-18T15:12:49.728548+00:00",
       "verdict": "APPROVE",
       "amountUsd": "0.001000",
       "vendor": "data-co",
@@ -248,7 +248,7 @@
       "reason": "micro-transaction inside all envelopes"
     },
     {
-      "at": "2026-08-18T13:21:06.752698+00:00",
+      "at": "2026-08-18T15:12:49.658905+00:00",
       "verdict": "APPROVE",
       "amountUsd": "0.001000",
       "vendor": "data-co",
@@ -257,7 +257,7 @@
       "reason": "micro-transaction inside all envelopes"
     },
     {
-      "at": "2026-08-18T13:21:06.699662+00:00",
+      "at": "2026-08-18T15:12:49.593068+00:00",
       "verdict": "APPROVE",
       "amountUsd": "0.001000",
       "vendor": "data-co",
@@ -266,7 +266,7 @@
       "reason": "micro-transaction inside all envelopes"
     },
     {
-      "at": "2026-08-18T13:21:06.648294+00:00",
+      "at": "2026-08-18T15:12:49.539022+00:00",
       "verdict": "APPROVE",
       "amountUsd": "0.001000",
       "vendor": "data-co",
@@ -275,7 +275,7 @@
       "reason": "micro-transaction inside all envelopes"
     },
     {
-      "at": "2026-08-18T13:21:06.592565+00:00",
+      "at": "2026-08-18T15:12:49.467685+00:00",
       "verdict": "APPROVE",
       "amountUsd": "0.001000",
       "vendor": "data-co",
@@ -284,7 +284,7 @@
       "reason": "micro-transaction inside all envelopes"
     },
     {
-      "at": "2026-08-18T13:21:06.527207+00:00",
+      "at": "2026-08-18T15:12:49.402916+00:00",
       "verdict": "APPROVE",
       "amountUsd": "0.001000",
       "vendor": "data-co",
@@ -293,7 +293,7 @@
       "reason": "micro-transaction inside all envelopes"
     },
     {
-      "at": "2026-08-18T13:21:06.475157+00:00",
+      "at": "2026-08-18T15:12:49.333182+00:00",
       "verdict": "APPROVE",
       "amountUsd": "0.001000",
       "vendor": "data-co",
@@ -302,7 +302,7 @@
       "reason": "micro-transaction inside all envelopes"
     },
     {
-      "at": "2026-08-18T13:21:06.420322+00:00",
+      "at": "2026-08-18T15:12:49.274420+00:00",
       "verdict": "APPROVE",
       "amountUsd": "0.001000",
       "vendor": "data-co",
@@ -311,7 +311,7 @@
       "reason": "micro-transaction inside all envelopes"
     },
     {
-      "at": "2026-08-18T13:21:06.368056+00:00",
+      "at": "2026-08-18T15:12:49.216226+00:00",
       "verdict": "APPROVE",
       "amountUsd": "0.001000",
       "vendor": "data-co",
@@ -320,7 +320,7 @@
       "reason": "micro-transaction inside all envelopes"
     },
     {
-      "at": "2026-08-18T13:21:06.317373+00:00",
+      "at": "2026-08-18T15:12:49.161151+00:00",
       "verdict": "APPROVE",
       "amountUsd": "0.001000",
       "vendor": "data-co",
@@ -329,7 +329,7 @@
       "reason": "micro-transaction inside all envelopes"
     },
     {
-      "at": "2026-08-18T13:21:06.265780+00:00",
+      "at": "2026-08-18T15:12:49.095869+00:00",
       "verdict": "APPROVE",
       "amountUsd": "0.001000",
       "vendor": "data-co",
@@ -338,7 +338,7 @@
       "reason": "micro-transaction inside all envelopes"
     },
     {
-      "at": "2026-08-18T13:21:06.207380+00:00",
+      "at": "2026-08-18T15:12:49.044042+00:00",
       "verdict": "APPROVE",
       "amountUsd": "0.001000",
       "vendor": "data-co",
@@ -347,7 +347,7 @@
       "reason": "micro-transaction inside all envelopes"
     },
     {
-      "at": "2026-08-18T13:21:06.149776+00:00",
+      "at": "2026-08-18T15:12:48.992950+00:00",
       "verdict": "APPROVE",
       "amountUsd": "0.001000",
       "vendor": "data-co",
@@ -356,7 +356,7 @@
       "reason": "micro-transaction inside all envelopes"
     },
     {
-      "at": "2026-08-18T13:21:06.096691+00:00",
+      "at": "2026-08-18T15:12:48.931346+00:00",
       "verdict": "APPROVE",
       "amountUsd": "0.001000",
       "vendor": "data-co",
@@ -365,7 +365,7 @@
       "reason": "micro-transaction inside all envelopes"
     },
     {
-      "at": "2026-08-18T13:21:06.048015+00:00",
+      "at": "2026-08-18T15:12:48.873976+00:00",
       "verdict": "APPROVE",
       "amountUsd": "0.001000",
       "vendor": "data-co",
@@ -374,7 +374,7 @@
       "reason": "micro-transaction inside all envelopes"
     },
     {
-      "at": "2026-08-18T13:21:05.994213+00:00",
+      "at": "2026-08-18T15:12:48.815736+00:00",
       "verdict": "APPROVE",
       "amountUsd": "0.001000",
       "vendor": "data-co",
@@ -383,7 +383,7 @@
       "reason": "micro-transaction inside all envelopes"
     },
     {
-      "at": "2026-08-18T13:21:05.942485+00:00",
+      "at": "2026-08-18T15:12:48.766384+00:00",
       "verdict": "APPROVE",
       "amountUsd": "0.001000",
       "vendor": "data-co",
@@ -392,7 +392,7 @@
       "reason": "micro-transaction inside all envelopes"
     },
     {
-      "at": "2026-08-18T13:21:05.894996+00:00",
+      "at": "2026-08-18T15:12:48.713258+00:00",
       "verdict": "APPROVE",
       "amountUsd": "0.001000",
       "vendor": "data-co",
@@ -401,7 +401,7 @@
       "reason": "micro-transaction inside all envelopes"
     },
     {
-      "at": "2026-08-18T13:21:05.838962+00:00",
+      "at": "2026-08-18T15:12:48.655704+00:00",
       "verdict": "APPROVE",
       "amountUsd": "0.001000",
       "vendor": "data-co",
@@ -410,7 +410,7 @@
       "reason": "micro-transaction inside all envelopes"
     },
     {
-      "at": "2026-08-18T13:21:05.785816+00:00",
+      "at": "2026-08-18T15:12:48.599604+00:00",
       "verdict": "APPROVE",
       "amountUsd": "0.001000",
       "vendor": "data-co",
@@ -419,7 +419,7 @@
       "reason": "micro-transaction inside all envelopes"
     },
     {
-      "at": "2026-08-18T13:21:05.729742+00:00",
+      "at": "2026-08-18T15:12:48.539209+00:00",
       "verdict": "APPROVE",
       "amountUsd": "0.001000",
       "vendor": "data-co",
@@ -428,7 +428,7 @@
       "reason": "micro-transaction inside all envelopes"
     },
     {
-      "at": "2026-08-18T13:21:05.678251+00:00",
+      "at": "2026-08-18T15:12:48.474315+00:00",
       "verdict": "APPROVE",
       "amountUsd": "0.001000",
       "vendor": "data-co",
@@ -437,7 +437,7 @@
       "reason": "micro-transaction inside all envelopes"
     },
     {
-      "at": "2026-08-18T13:21:05.621510+00:00",
+      "at": "2026-08-18T15:12:48.419886+00:00",
       "verdict": "APPROVE",
       "amountUsd": "0.001000",
       "vendor": "data-co",
@@ -446,7 +446,7 @@
       "reason": "micro-transaction inside all envelopes"
     },
     {
-      "at": "2026-08-18T13:21:05.566506+00:00",
+      "at": "2026-08-18T15:12:48.358381+00:00",
       "verdict": "APPROVE",
       "amountUsd": "0.001000",
       "vendor": "data-co",
@@ -455,7 +455,7 @@
       "reason": "micro-transaction inside all envelopes"
     },
     {
-      "at": "2026-08-18T13:21:05.508798+00:00",
+      "at": "2026-08-18T15:12:48.308333+00:00",
       "verdict": "APPROVE",
       "amountUsd": "0.001000",
       "vendor": "data-co",
@@ -464,7 +464,7 @@
       "reason": "micro-transaction inside all envelopes"
     },
     {
-      "at": "2026-08-18T13:21:05.459396+00:00",
+      "at": "2026-08-18T15:12:48.253503+00:00",
       "verdict": "APPROVE",
       "amountUsd": "0.001000",
       "vendor": "data-co",
@@ -473,7 +473,7 @@
       "reason": "micro-transaction inside all envelopes"
     },
     {
-      "at": "2026-08-18T13:21:05.405186+00:00",
+      "at": "2026-08-18T15:12:48.200437+00:00",
       "verdict": "APPROVE",
       "amountUsd": "0.001000",
       "vendor": "data-co",
@@ -482,7 +482,7 @@
       "reason": "micro-transaction inside all envelopes"
     },
     {
-      "at": "2026-08-18T13:21:05.352086+00:00",
+      "at": "2026-08-18T15:12:48.147402+00:00",
       "verdict": "APPROVE",
       "amountUsd": "0.001000",
       "vendor": "data-co",
@@ -491,7 +491,7 @@
       "reason": "micro-transaction inside all envelopes"
     },
     {
-      "at": "2026-08-18T13:21:05.300540+00:00",
+      "at": "2026-08-18T15:12:48.096614+00:00",
       "verdict": "APPROVE",
       "amountUsd": "0.001000",
       "vendor": "data-co",
@@ -500,7 +500,7 @@
       "reason": "micro-transaction inside all envelopes"
     },
     {
-      "at": "2026-08-18T13:21:05.252237+00:00",
+      "at": "2026-08-18T15:12:48.032508+00:00",
       "verdict": "APPROVE",
       "amountUsd": "0.001000",
       "vendor": "data-co",
@@ -509,7 +509,7 @@
       "reason": "micro-transaction inside all envelopes"
     },
     {
-      "at": "2026-08-18T13:21:05.204012+00:00",
+      "at": "2026-08-18T15:12:47.986697+00:00",
       "verdict": "APPROVE",
       "amountUsd": "0.001000",
       "vendor": "data-co",
@@ -518,7 +518,7 @@
       "reason": "micro-transaction inside all envelopes"
     },
     {
-      "at": "2026-08-18T13:21:05.154204+00:00",
+      "at": "2026-08-18T15:12:47.938527+00:00",
       "verdict": "APPROVE",
       "amountUsd": "0.001000",
       "vendor": "data-co",
@@ -527,7 +527,7 @@
       "reason": "micro-transaction inside all envelopes"
     },
     {
-      "at": "2026-08-18T13:21:05.109611+00:00",
+      "at": "2026-08-18T15:12:47.887729+00:00",
       "verdict": "APPROVE",
       "amountUsd": "0.001000",
       "vendor": "data-co",
@@ -536,7 +536,7 @@
       "reason": "micro-transaction inside all envelopes"
     },
     {
-      "at": "2026-08-18T13:21:05.059170+00:00",
+      "at": "2026-08-18T15:12:47.839117+00:00",
       "verdict": "APPROVE",
       "amountUsd": "0.001000",
       "vendor": "data-co",
@@ -545,7 +545,7 @@
       "reason": "micro-transaction inside all envelopes"
     },
     {
-      "at": "2026-08-18T13:21:05.012922+00:00",
+      "at": "2026-08-18T15:12:47.785782+00:00",
       "verdict": "APPROVE",
       "amountUsd": "0.001000",
       "vendor": "data-co",
@@ -554,7 +554,7 @@
       "reason": "micro-transaction inside all envelopes"
     },
     {
-      "at": "2026-08-18T13:21:04.965255+00:00",
+      "at": "2026-08-18T15:12:47.738195+00:00",
       "verdict": "APPROVE",
       "amountUsd": "0.001000",
       "vendor": "data-co",
@@ -563,7 +563,7 @@
       "reason": "micro-transaction inside all envelopes"
     },
     {
-      "at": "2026-08-18T13:21:04.915421+00:00",
+      "at": "2026-08-18T15:12:47.689388+00:00",
       "verdict": "APPROVE",
       "amountUsd": "0.001000",
       "vendor": "data-co",
@@ -572,7 +572,7 @@
       "reason": "micro-transaction inside all envelopes"
     },
     {
-      "at": "2026-08-18T13:21:04.863465+00:00",
+      "at": "2026-08-18T15:12:47.641853+00:00",
       "verdict": "APPROVE",
       "amountUsd": "0.001000",
       "vendor": "data-co",
@@ -581,7 +581,7 @@
       "reason": "micro-transaction inside all envelopes"
     },
     {
-      "at": "2026-08-18T13:21:04.828985+00:00",
+      "at": "2026-08-18T15:12:47.607388+00:00",
       "verdict": "APPROVE",
       "amountUsd": "0.001000",
       "vendor": "data-co",
@@ -602,7 +602,7 @@
     "caveat": "a hash chain detects edits and middle-deletions, not truncation: any prefix of a valid chain is itself valid. Closing that needs an external anchor."
   },
   "versions": {
-    "aegoll": "0.1.1",
+    "tesoro": "0.1.0",
     "aegs": "0.1"
   }
 }

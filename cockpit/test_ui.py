@@ -127,7 +127,7 @@ def ui(st):
 
 @pytest.fixture
 def governor(tmp_path):
-    from aegoll.plugin import Governor
+    from tesoro.plugin import Governor
 
     g = Governor(advisor=None, data_dir=tmp_path)
     yield g

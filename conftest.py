@@ -1,6 +1,6 @@
 """Test paths for a repo of standalone examples rather than one installable package.
 
-`cockpit/` and `harness/` hold modules that arrived from `aegoll` when the package shed
+`cockpit/` and `harness/` hold modules that arrived from `tesoro` when the package shed
 its UI (PLAN.md C4, C6). They are examples, not a library, so they are plain modules on
 the path rather than a package with an import root — which is the right shape for code
 whose job is to be read and copied.
@@ -13,7 +13,7 @@ Two consequences this file handles:
   demo scenarios in a tab. That cross-directory edge is real and is recorded here rather
   than hidden by flattening the layout.
 
-`aegoll` itself is **not** put on the path. Every example pins it from PyPI (C0.3), and a
+`tesoro` itself is **not** put on the path. Every example pins it from PyPI (C0.3), and a
 test that silently fell back to a sibling checkout would be testing the wrong thing —
 exactly the failure F-C1 describes.
 """
@@ -47,7 +47,7 @@ def repo_file(*parts: str) -> Path:
 def module_source(name: str, *, where: str = "cockpit") -> Path:
     """Source file of one of the moved modules, e.g. `module_source("ui.py")`.
 
-    Named to match `aegoll/tests/conftest.py`, but resolved differently and for a good
+    Named to match `tesoro/tests/conftest.py`, but resolved differently and for a good
     reason: there, the subject is an *installed package* and is found through its import.
     Here the subject is a plain file in this repository, and a repo-relative path is the
     honest answer. What both share is that the file is asserted to exist.

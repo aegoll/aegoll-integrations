@@ -39,9 +39,9 @@ from typing import Any
 
 import streamlit as st
 
-from aegoll.advisors import keys as keymod
-from aegoll.advisors import providers as advisor_providers
-from aegoll.advisors import test_key
+from tesoro.advisors import keys as keymod
+from tesoro.advisors import providers as advisor_providers
+from tesoro.advisors import test_key
 # Relative to where the user ran the app, not to where the package happens to be
 # installed. The prototype used a repo-root path derived from the package location,
 # which pointed into site-packages once installed. See PLAN.md F-A1.
@@ -61,7 +61,7 @@ SOURCE_LABEL = {
 }
 
 #: Streamlit session key. Named for the host-agnostic panel, not any one cockpit.
-SESSION_SLOT = "aegoll_byok_keys"
+SESSION_SLOT = "tesoro_byok_keys"
 
 
 def apply_session_keys() -> None:
@@ -131,24 +131,24 @@ def _provider_row(provider: dict[str, Any], env_path: Path) -> None:
         f"{name} API key",
         value="",
         type="password",
-        key=f"aegoll_byok_input_{name}",
+        key=f"tesoro_byok_input_{name}",
         placeholder=status.editable_hint or "paste key",
         label_visibility="collapsed",
     )
 
     cols = st.columns([1, 1, 1])
     save_to_env = cols[2].checkbox(
-        "Save to .env", key=f"aegoll_byok_persist_{name}", help=str(env_path)
+        "Save to .env", key=f"tesoro_byok_persist_{name}", help=str(env_path)
     )
 
-    if cols[0].button("Use", key=f"aegoll_byok_use_{name}", disabled=not entered):
+    if cols[0].button("Use", key=f"tesoro_byok_use_{name}", disabled=not entered):
         _accept(name, entered, save_to_env, env_path)
 
-    if cols[1].button("Test", key=f"aegoll_byok_test_{name}", disabled=not status.present):
+    if cols[1].button("Test", key=f"tesoro_byok_test_{name}", disabled=not status.present):
         _run_test(name, provider["models"])
 
     if status.source == "runtime" and st.button(
-        f"Forget {name} key", key=f"aegoll_byok_forget_{name}"
+        f"Forget {name} key", key=f"tesoro_byok_forget_{name}"
     ):
         st.session_state[SESSION_SLOT].pop(name, None)
         keymod.clear_runtime_key(name)

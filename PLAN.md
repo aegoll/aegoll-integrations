@@ -1,4 +1,4 @@
-# `aegoll-integrations` — sub-plan
+# `tesoro-integrations` — sub-plan
 
 **Examples, adapters in use, and use cases.** How to govern an agent on each framework,
 and what governance actually looks like when it fires.
@@ -10,7 +10,7 @@ Port sources (**read-only**): `../x402/agents/` (three framework agents + `x402_
 *framework-neutral* (the same behaviour on four harnesses) and *not a dependency*
 (an agent does not import the governor — the governor wraps the agent).
 
-It is also where everything heavy lives, so the `aegoll` package can stay light.
+It is also where everything heavy lives, so the `tesoro` package can stay light.
 
 ---
 
@@ -21,7 +21,7 @@ It is also where everything heavy lives, so the `aegoll` package can stay light.
       `quickstarts/` (5-minute, one per framework) · `frameworks/` (full agents) ·
       `usecases/` (governance stories) · `cockpit/` (Streamlit demo) ·
       `harness/` (matrix + measurement) · `docs/`
-- [ ] C0.3 Dependency stance: **every example pins `aegoll` from PyPI, never a path install.** An example that only works from a local checkout is not an example
+- [ ] C0.3 Dependency stance: **every example pins `tesoro` from PyPI, never a path install.** An example that only works from a local checkout is not an example
 - [ ] C0.4 One venv per framework directory. Three agent frameworks in one environment will resolve into a fight
 - [ ] C0.5 CI runs the offline-testable parts on every push; anything that needs a real key or real settlement is a separate, manual workflow
 - [ ] C0.6 `.env.example` with every key named and no key present. Carry the prototype's BYOK discipline: **keys are never committed, logged, or journalled**
@@ -38,9 +38,9 @@ It is also where everything heavy lives, so the `aegoll` package can stay light.
 - [x] C1.4 Both deliberate contents of `x402_core` intact — the tool descriptions carrying the price signal, and the telemetry shape
 - [x] C1.5 All three framework agents landed intact
 - [x] C1.6 `test_decoupling.py` carried — **and one of its assertions was found passing vacuously**, see [F-C1](#f-c1--a-test-that-stopped-checking-without-failing--2026-08-17)
-- [x] C1.7 `test_governance_hook.py` carried; the cockpit shim repointed at an installed `aegoll` — `405b95f`
+- [x] C1.7 `test_governance_hook.py` carried; the cockpit shim repointed at an installed `tesoro` — `405b95f`
 - [x] C1.8 **46 tests green**, matching a freshly measured POC baseline rather than a documented number
-- [x] C1.9 Every `aegl` import repointed to `aegoll`
+- [x] C1.9 Every `aegl` import repointed to `tesoro`
 - [ ] C1.10 The seller side stays in `../x402` (`src/server/`, TypeScript). Document how to point an example at it, and how to point one at any other x402 seller instead
 
 **Exit:** three agents running here, 46 tests green, nothing importing `aegl`.
@@ -70,11 +70,11 @@ prior knowledge.
 New ground — no prototype precedent, so budget discovery time rather than porting time.
 
 - [ ] C3.1 Read CrewAI's execution model: where a tool call happens, whether a pre-call hook exists, whether token spend is observable per step
-- [ ] C3.2 Write down what the adapter needs from a framework, generalised from the four data points. This becomes the adapter contract in [A7.1](../aegoll/PLAN.md)
+- [ ] C3.2 Write down what the adapter needs from a framework, generalised from the four data points. This becomes the adapter contract in [A7.1](../tesoro/PLAN.md)
 - [ ] C3.3 `frameworks/crewai/` — the same behaviour as the other three, same tools, same prompt
 - [ ] C3.4 `quickstarts/crewai.md`
-- [ ] C3.5 Feed anything the adapter contract could not express back to [A7](../aegoll/PLAN.md) as a finding, not a workaround
-- [ ] C3.6 Test: CrewAI agent does not import `aegoll` — the governor wraps it
+- [ ] C3.5 Feed anything the adapter contract could not express back to [A7](../tesoro/PLAN.md) as a finding, not a workaround
+- [ ] C3.6 Test: CrewAI agent does not import `tesoro` — the governor wraps it
 
 **Exit:** four frameworks, one contract, and a written list of what the contract failed to cover.
 
@@ -85,16 +85,16 @@ New ground — no prototype precedent, so budget discovery time rather than port
 Streamlit is fine for a demo and wrong for a library. It moves here and stops being
 part of anything shipped.
 
-- [ ] C4.1 Receive `app.py` (853 LOC), `ui.py` (383), `ui_demo.py` (128), `ui_keys.py` (190), `crossview.py` (227) from [A2.1](../aegoll/PLAN.md)
+- [ ] C4.1 Receive `app.py` (853 LOC), `ui.py` (383), `ui_demo.py` (128), `ui_keys.py` (190), `crossview.py` (227) from [A2.1](../tesoro/PLAN.md)
 - [ ] C4.2 Receive `cockpit_kit/` from `../x402/agents/`
-- [ ] C4.3 Repoint to the published `aegoll` public API only. **If the cockpit needs a private symbol, that is a gap in the public API** — raise it against [A0.6](../aegoll/PLAN.md) instead of reaching inside
+- [ ] C4.3 Repoint to the published `tesoro` public API only. **If the cockpit needs a private symbol, that is a gap in the public API** — raise it against [A0.6](../tesoro/PLAN.md) instead of reaching inside
 - [ ] C4.4 Carry the BYOK entry screen and the `masked()` display path unchanged
 - [ ] C4.5 Carry the cross-framework comparison view
-- [ ] C4.6 `cockpit/README.md` states plainly: demo and development surface, not the supported UI. The supported visual output is `aegoll serve` ([A10](../aegoll/PLAN.md))
+- [ ] C4.6 `cockpit/README.md` states plainly: demo and development surface, not the supported UI. The supported visual output is `tesoro serve` ([A10](../tesoro/PLAN.md))
 - [ ] C4.7 Carry the 14 UI tests from `../x402/aegl/tests/test_ui*.py`
-- [ ] C4.8 Once [A10](../aegoll/PLAN.md) ships, decide whether the cockpit is retired or kept as the richer demo. Record the decision either way
+- [ ] C4.8 Once [A10](../tesoro/PLAN.md) ships, decide whether the cockpit is retired or kept as the richer demo. Record the decision either way
 
-**Exit:** cockpit runs here against published `aegoll`, using public API only.
+**Exit:** cockpit runs here against published `tesoro`, using public API only.
 
 ---
 
@@ -108,9 +108,9 @@ examples the white paper points at.
 - [ ] C5.3 `usecases/delegation/` — a parent agent spawning sub-agents. Shows the delegation clamp: a sub-agent may never claim more than its parent
 - [ ] C5.4 `usecases/budget-exhaustion/` — the internal channel running out mid-run. Shows why an exhausted token budget must REJECT rather than REVIEW: there is no human to ask mid-run, and starting a run that cannot finish wastes the budget that is already short
 - [ ] C5.5 `usecases/untrusted-vendor/` — cold start at 0.25, trust earned over settlements, revoked by one dispute
-- [ ] C5.6 `usecases/aml-structuring/` — the open red-team finding as a runnable demo: 40 × $0.001 paced five minutes apart, nothing refused. **Ships as a demonstration of the gap**, then flips to a defended state when [A11](../aegoll/PLAN.md) lands
+- [ ] C5.6 `usecases/aml-structuring/` — the open red-team finding as a runnable demo: 40 × $0.001 paced five minutes apart, nothing refused. **Ships as a demonstration of the gap**, then flips to a defended state when [A11](../tesoro/PLAN.md) lands
 - [ ] C5.7 `usecases/prompt-injection/` — vendor text trying to talk its way past the layer. Shows the deterministic path ignoring prose entirely
-- [ ] C5.8 `usecases/custom-policy/` — a user's own rule kind and engine, end to end, matching [A6.11](../aegoll/PLAN.md)
+- [ ] C5.8 `usecases/custom-policy/` — a user's own rule kind and engine, end to end, matching [A6.11](../tesoro/PLAN.md)
 - [ ] C5.9 `usecases/evidence-audit/` — emit Decision Records, verify the chain, score them with `aegs-conformance`. The full evidence loop in one script
 - [ ] C5.10 Every use case emits its Decision Records into the repo so they can be read without running anything
 
@@ -122,12 +122,12 @@ examples the white paper points at.
 
 The measurement code leaves the package and lives here, where a heavy dependency is fine.
 
-- [ ] C6.1 Receive `scenarios.py` (316 LOC) and `evaluation.py` (436 LOC) from [A2.2](../aegoll/PLAN.md)
+- [ ] C6.1 Receive `scenarios.py` (316 LOC) and `evaluation.py` (436 LOC) from [A2.2](../tesoro/PLAN.md)
 - [ ] C6.2 Receive `matrix.py` — the framework × provider × governance sweep
-- [ ] C6.3 Receive the `bench` and `eval` CLI paths dropped in [A5.13](../aegoll/PLAN.md), as `harness/` scripts
-- [ ] C6.4 Reproduce the prototype's sealed baselines against published `aegoll`. Where a number moves, that is a finding, not a nuisance
+- [ ] C6.3 Receive the `bench` and `eval` CLI paths dropped in [A5.13](../tesoro/PLAN.md), as `harness/` scripts
+- [ ] C6.4 Reproduce the prototype's sealed baselines against published `tesoro`. Where a number moves, that is a finding, not a nuisance
 - [ ] C6.5 New sealed experiment record for anything the packaging changed. **Sealed records are superseded, never edited** — a corrected measurement becomes a new record with `supersedes` pointing back
-- [ ] C6.6 Every harness run stamps the policy bundle hash, the `aegoll` version and the AEGS version. The prototype learned this the hard way: nothing had recorded *which policy bundle* a measurement ran against, so a rule change would have invalidated stored results with no way to notice
+- [ ] C6.6 Every harness run stamps the policy bundle hash, the `tesoro` version and the AEGS version. The prototype learned this the hard way: nothing had recorded *which policy bundle* a measurement ran against, so a rule change would have invalidated stored results with no way to notice
 - [ ] C6.7 `harness/README.md` — what each measurement can and cannot show. Every prototype figure is one run or a handful; do not let a chart imply otherwise
 
 **Exit:** the sweep reproduces, every figure stamped, limits written down.
@@ -166,7 +166,7 @@ produced a vacuously-passing guard:
 
 | Where | Shape |
 |---|---|
-| [F-A1](../aegoll/PLAN.md) | eleven modules resolving paths outside the package |
+| [F-A1](../tesoro/PLAN.md) | eleven modules resolving paths outside the package |
 | `cockpit_kit/governance.py` | `parents[3] / "aegl"` inserted into `sys.path` |
 | this test | a guessed relative path that resolved to nothing, and passed |
 | *(prototype, before this work)* | a purity test naming files that had become three-line shims |
@@ -177,7 +177,7 @@ vacuous one gets trusted.
 
 So the fix is more than a repoint: resolve the subject from the *installed* package, assert
 it exists and holds modules, and skip explicitly when it is absent. Same discipline as
-`aegoll/tests/conftest.py` and `aegoll/tests/test_paths.py`.
+`tesoro/tests/conftest.py` and `tesoro/tests/test_paths.py`.
 
 **Worth watching for.** Every remaining port is a chance for the same thing. Any test that
 builds a path from `__file__` should be treated as suspect until it has been shown to fail

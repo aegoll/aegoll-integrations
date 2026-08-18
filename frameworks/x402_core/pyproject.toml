@@ -7,7 +7,7 @@ requires-python = ">=3.11"
 dependencies = [
     # The governance layer, from PyPI. An example that only works from a
     # particular checkout layout is not an example.
-    "aegoll>=0.1.0","x402[evm,httpx]>=2.18.0"]
+    "tesoro>=0.1.0","x402[evm,httpx]>=2.18.0"]
 
 [tool.setuptools.packages.find]
 include = ["x402_core*"]

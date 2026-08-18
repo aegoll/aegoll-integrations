@@ -56,8 +56,8 @@ def story(case: Story) -> int:
     case.say("  including `silent`, which declared no ceiling to be refused by.")
     case.say()
 
-    from aegoll.engines.evidence import identity as identity_engine
-    from aegoll.domain import Vendor
+    from tesoro.engines.evidence import identity as identity_engine
+    from tesoro.domain import Vendor
 
     layer = case.gov._layer
     parent = layer.identities.get("parent")
@@ -78,7 +78,7 @@ def story(case: Story) -> int:
                  f"{'  '.join(codes) or '(nothing objected)'}")
 
     case.heading("4. the clamp, stated as numbers")
-    from aegoll.engines.evidence.identity import narrower_limit
+    from tesoro.engines.evidence.identity import narrower_limit
 
     for child, parent_limit, label in (
         (100_000, 500_000, "child $0.10, parent $0.50"),

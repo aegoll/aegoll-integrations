@@ -6,7 +6,7 @@ requires-python = ">=3.11"
 dependencies = [
     # The governance layer, from PyPI. An example that only works from a
     # particular checkout layout is not an example.
-    "aegoll>=0.1.0",
+    "tesoro>=0.1.0",
     "google-adk>=2.0",
     "google-genai>=1.0",
     # Sibling package in this repo, installed from ../x402_core

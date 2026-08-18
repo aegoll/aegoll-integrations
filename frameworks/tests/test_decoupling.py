@@ -69,13 +69,13 @@ def test_no_other_agent_imports_the_claude_agent():
     assert not offenders, NEWLINE_INDENT.join(offenders)
 
 
-def test_aegoll_imports_no_agent():
+def test_tesoro_imports_no_agent():
     """The governance layer depends on the payment rail, never on an agent.
 
     This is the structural claim behind "universal plugin": if the layer imported one
     agent's package it could not honestly be installed into another framework.
 
-    Resolved from the **installed** `aegoll`, and asserted to exist. The prototype's
+    Resolved from the **installed** `tesoro`, and asserted to exist. The prototype's
     version read
 
         aegl_pkg = AGENTS_DIR.parent / "aegl" / "aegl"
@@ -85,11 +85,11 @@ def test_aegoll_imports_no_agent():
     no failure, just a silent stop. That is a worse outcome than a red test, and it is
     the third time this exact shape has appeared in this restructure.
     """
-    aegoll = pytest.importorskip(
-        "aegoll", reason="the governance layer is not installed; `pip install aegoll`"
+    tesoro = pytest.importorskip(
+        "tesoro", reason="the governance layer is not installed; `pip install tesoro`"
     )
-    assert aegoll.__file__ is not None, "aegoll is a namespace package, not a real one"
-    pkg = Path(aegoll.__file__).resolve().parent
+    assert tesoro.__file__ is not None, "tesoro is a namespace package, not a real one"
+    pkg = Path(tesoro.__file__).resolve().parent
 
     modules = list(pkg.rglob("*.py"))
     assert modules, f"{pkg} holds no modules — this test would pass by checking nothing"
@@ -101,7 +101,7 @@ def test_aegoll_imports_no_agent():
             if module.split(".")[0] in agent_packages:
                 offenders.append(f"{path.relative_to(pkg)}:{line} imports {module}")
     assert not offenders, (
-        "aegoll reached into an agent package:" + NEWLINE_INDENT
+        "tesoro reached into an agent package:" + NEWLINE_INDENT
         + NEWLINE_INDENT.join(offenders)
     )
 

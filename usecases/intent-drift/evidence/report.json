@@ -233,16 +233,16 @@
   },
   "decisions": [
     {
-      "at": "2026-08-18T13:21:02.140742+00:00",
+      "at": "2026-08-18T15:12:44.805298+00:00",
       "verdict": "REJECT",
       "amountUsd": "0.010000",
       "vendor": "data-co",
       "resource": "/market/snapshot",
       "attributedControl": "intent",
-      "reason": "intent int-75dc77191182 was revoked; it authorises nothing"
+      "reason": "intent int-2e72c813bb8b was revoked; it authorises nothing"
     },
     {
-      "at": "2026-08-18T13:21:02.084988+00:00",
+      "at": "2026-08-18T15:12:44.756943+00:00",
       "verdict": "REVIEW",
       "amountUsd": "0.010000",
       "vendor": "data-co",
@@ -251,7 +251,7 @@
       "reason": "`/social/followers` is outside the intent's declared resources (/market/snapshot, /market/depth)"
     },
     {
-      "at": "2026-08-18T13:21:02.028454+00:00",
+      "at": "2026-08-18T15:12:44.707569+00:00",
       "verdict": "APPROVE",
       "amountUsd": "0.010000",
       "vendor": "data-co",
@@ -260,7 +260,7 @@
       "reason": "micro-transaction inside all envelopes"
     },
     {
-      "at": "2026-08-18T13:21:01.991555+00:00",
+      "at": "2026-08-18T15:12:44.670069+00:00",
       "verdict": "APPROVE",
       "amountUsd": "0.010000",
       "vendor": "data-co",
@@ -281,7 +281,7 @@
     "caveat": "a hash chain detects edits and middle-deletions, not truncation: any prefix of a valid chain is itself valid. Closing that needs an external anchor."
   },
   "versions": {
-    "aegoll": "0.1.1",
+    "tesoro": "0.1.0",
     "aegs": "0.1"
   }
 }

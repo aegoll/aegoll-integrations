@@ -62,10 +62,10 @@ def fetch(path: str) -> dict:
 
 
 def main() -> int:
-    from aegoll import Governor
+    from tesoro import Governor
 
-    gov = Governor.load()  # reads ./aegoll.yaml, or the packaged starter if there is none
-    print(f"aegoll: {gov.report().policy_name} policy, AEGS {_aegs_version()}")
+    gov = Governor.load()  # reads ./tesoro.yaml, or the packaged starter if there is none
+    print(f"tesoro: {gov.report().policy_name} policy, AEGS {_aegs_version()}")
     print()
 
     outcomes: list = []
@@ -145,14 +145,14 @@ def main() -> int:
 def _aegs_version() -> str:
     """Which specification this implementation implements.
 
-    Read from `aegoll.record` rather than the top level: 0.1.0 shipped without exporting
-    `aegoll.AEGS_VERSION`, so the top-level name raises on the version this quickstart pins.
+    Read from `tesoro.record` rather than the top level: 0.1.0 shipped without exporting
+    `tesoro.AEGS_VERSION`, so the top-level name raises on the version this quickstart pins.
     Falls forward automatically once 0.1.1 is out.
     """
-    import aegoll
+    import tesoro
 
-    return getattr(aegoll, "AEGS_VERSION", None) or __import__(
-        "aegoll.record", fromlist=["AEGS_VERSION"]
+    return getattr(tesoro, "AEGS_VERSION", None) or __import__(
+        "tesoro.record", fromlist=["AEGS_VERSION"]
     ).AEGS_VERSION
 
 

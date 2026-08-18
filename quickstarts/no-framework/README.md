@@ -16,7 +16,7 @@ That is the whole setup. No keys, no `.env`, nothing to sign up for.
 ## What you see
 
 ```
-aegoll: default policy, AEGS 0.1
+tesoro: default policy, AEGS 0.1
 
   bought   /market/snapshot       $ 0.010000
   bought   /market/depth          $ 0.050000
@@ -97,7 +97,7 @@ bounded and explicable; it is not a substitute for keeping a funded key out of a
 Strip the printing and the loop is this:
 
 ```python
-from aegoll import Governor
+from tesoro import Governor
 
 gov = Governor.load()
 
@@ -116,6 +116,6 @@ else:
 decimal string like `"2.50"`. A `float` raises: `0.1 + 0.2` is not `0.3`, and there is no rounding
 this layer could pick that you would know about.
 
-Next: [`docs/quickstart.md`](https://github.com/aegoll/aegoll/blob/main/docs/quickstart.md) in the
-package itself, or [`docs/adapters.md`](https://github.com/aegoll/aegoll/blob/main/docs/adapters.md)
+Next: [`docs/quickstart.md`](https://github.com/aegoll/tesoro/blob/main/docs/quickstart.md) in the
+package itself, or [`docs/adapters.md`](https://github.com/aegoll/tesoro/blob/main/docs/adapters.md)
 if you are wiring a framework in.

@@ -5,7 +5,7 @@ from __future__ import annotations
 import pytest
 
 from scenarios import SCENARIOS, run_all, run_scenario
-from aegoll.domain import Verdict
+from tesoro.domain import Verdict
 
 
 @pytest.mark.parametrize("scenario", SCENARIOS, ids=lambda s: s.key)

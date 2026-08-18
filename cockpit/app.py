@@ -1,9 +1,12 @@
-"""AEGL cockpit -- one panel per engine.
+"""The cockpit -- one panel per engine.
 
-    aegoll/.venv/Scripts/streamlit run aegoll/aegoll/app.py --server.port 8502
+    streamlit run cockpit/app.py --server.port 8502
 
 Runs on its own port, separate from the agent cockpits, so the governance layer
 and the agent stay isolated.
+
+Not the supported UI -- see `cockpit/README.md`. The supported visual output ships in the
+package: `tesoro report --html` today, `tesoro serve` in 0.2.
 
 The point of this UI is that a governance layer you cannot inspect is not
 auditable. Every engine shows its inputs, its output, and the weighted terms that
@@ -24,8 +27,8 @@ _AEGL_ROOT = str(Path(__file__).resolve().parents[1])
 if _AEGL_ROOT not in sys.path:
     sys.path.insert(0, _AEGL_ROOT)
 
-from aegoll.config import available_bundles, load_bundle  # noqa: E402
-from aegoll.runtime import Aegoll, Paths  # noqa: E402
+from tesoro.config import available_bundles, load_bundle  # noqa: E402
+from tesoro.runtime import Tesoro, Paths  # noqa: E402
 from scenarios import (  # noqa: E402
     KNOWN_VENDOR,
     NEW_VENDOR,
@@ -34,7 +37,7 @@ from scenarios import (  # noqa: E402
     SCENARIOS,
     run_scenario,
 )
-from aegoll.domain import (  # noqa: E402
+from tesoro.domain import (  # noqa: E402
     Purpose,
     Vendor,
     Verdict,
@@ -119,7 +122,7 @@ if st.sidebar.button("Reset journal, history and queue"):
 # --------------------------------------------------------------------------
 # BYOK keys (Phase 2 advisors)
 # --------------------------------------------------------------------------
-from aegoll.advisors import advisor_catalogue_safe  # noqa: E402
+from tesoro.advisors import advisor_catalogue_safe  # noqa: E402
 
 st.sidebar.divider()
 st.sidebar.subheader("Advisor keys (BYOK)")
@@ -141,17 +144,17 @@ st.sidebar.caption(
 
 
 @st.cache_resource(show_spinner=False)
-def _runtime(policy_hash: str, persistent: bool) -> Aegoll:
-    """One Aegoll per (policy, persistence) combination.
+def _runtime(policy_hash: str, persistent: bool) -> Tesoro:
+    """One Tesoro per (policy, persistence) combination.
 
     Cached because the SQLite connection should not be rebuilt on every rerun.
     """
     b = load_bundle(bundles[bundle_names.index(choice)])
     paths = Paths.under() if persistent else Paths.ephemeral(".data-playground")
-    return Aegoll(bundle=b, paths=paths)
+    return Tesoro(bundle=b, paths=paths)
 
 
-aegoll = _runtime(bundle.hash, persist)
+tesoro = _runtime(bundle.hash, persist)
 
 
 # --------------------------------------------------------------------------
@@ -165,7 +168,7 @@ st.caption(
     "so a decision costs nothing and takes microseconds."
 )
 
-summary = aegoll.summary()
+summary = tesoro.summary()
 h = st.columns(5)
 h[0].metric("Inference cost", "$0.000000", "no model invoked")
 h[1].metric("Decisions journalled", summary["auditEntries"])
@@ -286,7 +289,7 @@ with tabs[0]:
             seed_thin_history,
             seed_trusted_vendor,
         )
-        from aegoll.clock import FixedClock
+        from tesoro.clock import FixedClock
 
         seeder = {
             "none": None,
@@ -295,7 +298,7 @@ with tabs[0]:
             "suspicious": seed_suspicious,
         }[seed_choice]
 
-        run = Aegoll(
+        run = Tesoro(
             bundle=bundle,
             paths=Paths.ephemeral(".data-playground-run"),
             clock=FixedClock(BASE_TIME),
@@ -322,8 +325,8 @@ with tabs[0]:
                 "request": req,
             }
             if persist:
-                aegoll.authorize(
-                    aegoll.build_request(
+                tesoro.authorize(
+                    tesoro.build_request(
                         resource=resource,
                         amount_usd=amount,
                         vendor=Vendor(id=vendor.id, name=vendor.name, sanctioned=sanctioned),
@@ -640,7 +643,7 @@ with tabs[6]:
         "blocking: the agent cannot proceed. Both land here so nothing is silently "
         "dropped, but they are reported distinctly."
     )
-    pending = aegoll.queue.pending()
+    pending = tesoro.queue.pending()
     if not pending:
         st.success("Nothing pending.")
         if not persist:
@@ -660,13 +663,13 @@ with tabs[6]:
             note = st.text_input("Note", key=f"note-{item.request_id}")
             b1, b2 = st.columns(2)
             if b1.button("Approve", key=f"ok-{item.request_id}"):
-                aegoll.queue.resolve(item.request_id, "approved", by="cockpit", note=note)
+                tesoro.queue.resolve(item.request_id, "approved", by="cockpit", note=note)
                 st.rerun()
             if b2.button("Deny", key=f"no-{item.request_id}"):
-                aegoll.queue.resolve(item.request_id, "denied", by="cockpit", note=note)
+                tesoro.queue.resolve(item.request_id, "denied", by="cockpit", note=note)
                 st.rerun()
 
-    resolved = [i for i in aegoll.queue.all() if i.resolution != "pending"]
+    resolved = [i for i in tesoro.queue.all() if i.resolution != "pending"]
     if resolved:
         with st.expander(f"Resolved ({len(resolved)})"):
             st.dataframe(
@@ -697,13 +700,13 @@ with tabs[7]:
         "Deliberately not a database: a flat file is verifiable by a third party "
         "without our code."
     )
-    ok, problems = aegoll.audit.verify()
-    entries = aegoll.audit.entries()
+    ok, problems = tesoro.audit.verify()
+    entries = tesoro.audit.entries()
 
     a1, a2, a3 = st.columns(3)
     a1.metric("Entries", len(entries))
     a2.metric("Chain", "VALID" if ok else "BROKEN")
-    a3.metric("File", aegoll.paths.audit.name)
+    a3.metric("File", tesoro.paths.audit.name)
 
     if problems:
         for p in problems:
@@ -711,12 +714,12 @@ with tabs[7]:
 
     b1, b2 = st.columns(2)
     if b1.button("Verify chain"):
-        ok2, probs2 = aegoll.audit.verify()
+        ok2, probs2 = tesoro.audit.verify()
         (st.success if ok2 else st.error)(
             "chain valid" if ok2 else f"{len(probs2)} problem(s): " + "; ".join(probs2)
         )
     if b2.button("Replay determinism check"):
-        st.json(aegoll.replay())
+        st.json(tesoro.replay())
 
     if entries:
         st.dataframe(
@@ -758,7 +761,7 @@ with tabs[8]:
         "the record that can be verified rather than a convenience table."
     )
 
-    _entries = aegoll.audit.entries()
+    _entries = tesoro.audit.entries()
     _summary = crossview.summarise(_entries)
     _totals = _summary["totals"]
 

@@ -1,7 +1,7 @@
 """Optional AEGL, for the cockpits built by this kit.
 
 The split this file sits on: **hosts wire AEGL up, agents do not**. The LangGraph
-and ADK agent packages never import `aegoll` — they accept a duck-typed governor via
+and ADK agent packages never import `tesoro` — they accept a duck-typed governor via
 `x402_core.RunGuard`. The cockpit is the host, so it is allowed to know AEGL exists,
 construct a `Governor`, and hand it in.
 
@@ -11,7 +11,7 @@ shim would have to live in a package both hosts import, and the only candidate i
 depending on the layer above it. Two ~50-line shims that each handle absence
 independently is the cheaper price.
 
-If `aegoll` is not importable, `available()` is False and every cockpit runs exactly
+If `tesoro` is not importable, `available()` is False and every cockpit runs exactly
 as it did before governance existed.
 """
 
@@ -19,14 +19,14 @@ from __future__ import annotations
 
 from typing import Any
 
-# `aegoll` is an installed package, found the way any consumer finds it. The
+# `tesoro` is an installed package, found the way any consumer finds it. The
 # prototype did
 #
 #     _AEGL_DIR = Path(__file__).resolve().parents[3] / "aegl"
 #     sys.path.insert(0, str(_AEGL_DIR))
 #
 # because the layer sat beside `agents/` in one repository and neither was
-# published. Every example here pins `aegoll` from PyPI instead: an example that
+# published. Every example here pins `tesoro` from PyPI instead: an example that
 # only works from a particular checkout layout is not an example.
 
 AEGL_AVAILABLE = False
@@ -35,9 +35,9 @@ _IMPORT_ERROR: str | None = None
 try:
     import ui as aegl_ui
     import ui_keys as aegl_ui_keys
-    from aegoll.advisors import available_models, estimate_call_cost_usd
-    from aegoll.config import available_bundles
-    from aegoll.plugin import NOT_RECOMMENDED, Governor
+    from tesoro.advisors import available_models, estimate_call_cost_usd
+    from tesoro.config import available_bundles
+    from tesoro.plugin import NOT_RECOMMENDED, Governor
 
     AEGL_AVAILABLE = True
 except Exception as exc:  # pragma: no cover - exercised by absence
@@ -70,7 +70,7 @@ def advisor_cost(model: str) -> float:
 
 
 def advisor_warning(model: str) -> str | None:
-    """Whether a model was measured as unusable for advice. See aegoll `docs/eval.md`."""
+    """Whether a model was measured as unusable for advice. See tesoro `docs/eval.md`."""
     return NOT_RECOMMENDED.get(model) if AEGL_AVAILABLE else None
 
 
@@ -92,8 +92,8 @@ def build(
     """
     if not AEGL_AVAILABLE:
         raise RuntimeError(
-            "aegoll is not importable, so the cockpit cannot govern anything: "
-            f"{_IMPORT_ERROR}\n  pip install aegoll"
+            "tesoro is not importable, so the cockpit cannot govern anything: "
+            f"{_IMPORT_ERROR}\n  pip install tesoro"
         )
     return Governor(policy=policy, advisor=advisor, framework=framework)
 

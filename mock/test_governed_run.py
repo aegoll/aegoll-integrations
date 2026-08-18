@@ -48,7 +48,7 @@ def seller():
 def gov(tmp_path, monkeypatch):
     """A governor in a scratch directory, so each test has its own envelopes and journal."""
     monkeypatch.chdir(tmp_path)
-    from aegoll import Governor
+    from tesoro import Governor
 
     governor = Governor.load()
     yield governor
@@ -158,7 +158,7 @@ def test_a_cumulative_budget_refuses_what_no_per_payment_cap_would(seller, tmp_p
     monkeypatch.chdir(tmp_path)
     _write_tight_daily_policy(tmp_path, daily_usd="0.05", per_transaction_usd="10")
 
-    from aegoll import Governor
+    from tesoro import Governor
 
     gov = Governor.load()
     try:
@@ -201,7 +201,7 @@ def _write_tight_daily_policy(directory, *, daily_usd: str, per_transaction_usd:
     """
     from importlib import resources
 
-    packaged = resources.files("aegoll") / "policies" / "default.yaml"
+    packaged = resources.files("tesoro") / "policies" / "default.yaml"
     pack = directory / "policies"
     pack.mkdir(exist_ok=True)
 
@@ -212,13 +212,13 @@ def _write_tight_daily_policy(directory, *, daily_usd: str, per_transaction_usd:
     )
     (pack / "tight.yaml").write_text(text, encoding="utf-8")
 
-    (directory / "aegoll.yaml").write_text(
+    (directory / "tesoro.yaml").write_text(
         "\n".join(
             [
                 "profile: aegs-1",
                 "policy: policies/tight.yaml",
                 "evidence:",
-                "  journal: .aegoll/audit.jsonl",
+                "  journal: .tesoro/audit.jsonl",
                 "",
             ]
         ),

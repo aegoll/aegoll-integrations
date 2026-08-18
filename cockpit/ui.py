@@ -1,9 +1,9 @@
 """The AEGL panel, as a plugin.
 
 ```python
-import ui as aegoll_ui
+import ui as tesoro_ui
 
-aegoll_ui.render(gov.report())          # one call, any Streamlit app
+tesoro_ui.render(gov.report())          # one call, any Streamlit app
 ```
 
 A governance layer that needs bespoke UI work per host is not really portable, so

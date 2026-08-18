@@ -1,6 +1,6 @@
-# aegoll-integrations
+# tesoro-integrations
 
-**Governed agents you can run.** How to put [`aegoll`](https://github.com/aegoll/aegoll)
+**Governed agents you can run.** How to put [`tesoro`](https://github.com/aegoll/tesoro)
 between an agent and its wallet on each framework, and what governance looks like when it
 actually fires.
 
@@ -63,7 +63,7 @@ without running anything.
 
 ## Ground rules
 
-- **Every example pins `aegoll` from PyPI, never a path install.** An example that only works
+- **Every example pins `tesoro` from PyPI, never a path install.** An example that only works
   from a local checkout is not an example.
 - One virtual environment per framework directory. Three agent frameworks in one environment
   resolve into a fight.
@@ -78,13 +78,13 @@ without running anything.
 ## What the measurements can and cannot show
 
 Every figure in `harness/` is one run or a handful, single-agent, on testnet. Each run stamps
-the policy hash, the `aegoll` version and the AEGS version — because the prototype learned the
+the policy hash, the `tesoro` version and the AEGS version — because the prototype learned the
 hard way that a measurement which does not record *which policy it ran against* is invalidated
 by the next rule change with no way to notice.
 
 ## Related
 
-[`aegoll`](https://github.com/aegoll/aegoll) — the package ·
+[`tesoro`](https://github.com/aegoll/tesoro) — the package ·
 [`aegs`](https://github.com/aegoll/aegs) — the standard ·
 [`Jayzilva/x402`](https://github.com/Jayzilva/x402) — the read-only proof-of-concept, and the
 x402 seller these examples buy from

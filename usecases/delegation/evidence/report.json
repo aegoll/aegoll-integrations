@@ -230,7 +230,7 @@
   },
   "decisions": [
     {
-      "at": "2026-08-18T13:21:02.674097+00:00",
+      "at": "2026-08-18T15:12:45.366993+00:00",
       "verdict": "REVIEW",
       "amountUsd": "1.000000",
       "vendor": "data-co",
@@ -251,7 +251,7 @@
     "caveat": "a hash chain detects edits and middle-deletions, not truncation: any prefix of a valid chain is itself valid. Closing that needs an external anchor."
   },
   "versions": {
-    "aegoll": "0.1.1",
+    "tesoro": "0.1.0",
     "aegs": "0.1"
   }
 }

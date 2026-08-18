@@ -1,4 +1,4 @@
-# Contributing to `aegoll-integrations`
+# Contributing to `tesoro-integrations`
 
 Apache-2.0. By contributing you agree your work is licensed under it.
 
@@ -9,7 +9,7 @@ This repo's job is to make two claims checkable rather than asserted: that the l
 
 ## Ground rules
 
-- **Pin `aegoll` from PyPI.** Never `-e ../aegoll`, never a `file:` URL. An example that only
+- **Pin `tesoro` from PyPI.** Never `-e ../tesoro`, never a `file:` URL. An example that only
   works from a local checkout is not an example, and CI fails on path installs.
 - **One virtual environment per framework directory.** Three agent frameworks in one
   environment resolve into a fight.
@@ -31,7 +31,7 @@ This repo's job is to make two claims checkable rather than asserted: that the l
    write-up is more valuable than the code.
 2. Implement **the same behaviour** as the existing agents — same tools, same prompt. A
    comparison across frameworks is worthless if the agents are doing different work.
-3. Anything the adapter contract could not express goes back to `aegoll` as a **finding**, not
+3. Anything the adapter contract could not express goes back to `tesoro` as a **finding**, not
    a workaround here. Working around a gap hides it.
 4. Add a quickstart, and add the framework to the CI matrix.
 
@@ -65,7 +65,7 @@ Do not move them into individual agents:
 
 ## Measurements
 
-Every harness run stamps the policy hash, the `aegoll` version and the AEGS version. A
+Every harness run stamps the policy hash, the `tesoro` version and the AEGS version. A
 measurement that does not record *which policy it ran against* is invalidated by the next rule
 change with no way to notice — this is a real bug the prototype found, not a hypothetical.
 

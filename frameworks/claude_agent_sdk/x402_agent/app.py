@@ -53,7 +53,7 @@ from x402_agent.config import (  # noqa: E402
     load_config,
 )
 from x402_agent.governance import (  # noqa: E402
-    AEGOLL_AVAILABLE,
+    TESORO_AVAILABLE,
     advisor_catalogue,
     advisor_cost,
     advisor_warning,
@@ -65,10 +65,10 @@ from x402_agent.governance import (  # noqa: E402
 
 # The panels used to ship *inside* the governance layer, as `aegl.ui`. They no longer do:
 # the package shed every UI module when it stopped depending on Streamlit (PLAN.md A2), so
-# `aegoll` has no `ui` at all and this import could never have succeeded against the
+# `tesoro` has no `ui` at all and this import could never have succeeded against the
 # published package. They live in this repository now, under `cockpit/`, which is where a
 # demo surface belongs -- a library that governs payments should not carry a web framework.
-if AEGOLL_AVAILABLE:
+if TESORO_AVAILABLE:
     try:
         import ui as aegl_ui  # noqa: E402  -- from cockpit/, put on the path by conftest
         import ui_keys as aegl_ui_keys  # noqa: E402
@@ -303,7 +303,7 @@ if AEGL_AVAILABLE:
     if advisor_spec:
         _warn = advisor_warning(advisor_spec[1])
         if _warn:
-            # Measured, not guessed -- see the aegoll repository's docs/eval.md.
+            # Measured, not guessed -- see the tesoro repository's docs/eval.md.
             st.sidebar.warning(f"**Not recommended.** {_warn}")
         _c = advisor_cost(advisor_spec[1])
         st.sidebar.caption(
@@ -319,7 +319,7 @@ else:
     governance_on = False
     governance_policy = None
     advisor_spec = None
-    st.sidebar.warning(f"aegoll not installed: {import_error()}")
+    st.sidebar.warning(f"tesoro not installed: {import_error()}")
 
 st.sidebar.divider()
 spent_total = total_llm_spend_usd()
