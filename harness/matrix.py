@@ -38,14 +38,37 @@ import json
 import sys
 import time
 from dataclasses import dataclass, field
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
 HERE = Path(__file__).resolve().parent
-for sub in ("x402_core", "langgraph", "google_adk", "cockpit_kit"):
-    p = str(HERE / sub)
-    if p not in sys.path:
-        sys.path.insert(0, p)
+REPO = HERE.parent
+
+#: Where the agents and the shared protocol layer actually live. This module resolved them under
+#: `harness/` -- `HERE / "x402_core"` and so on -- which is where they sat in the prototype's
+#: layout and is nowhere in this repository. So `matrix.py` has been unimportable since the port:
+#: `ModuleNotFoundError: No module named 'x402_core'` on the first line that mattered, and
+#: nothing exercised it, so nothing said so. PLAN.md F-C1, again.
+#:
+#: Asserted rather than assumed. A path that resolves to nothing does not raise when you add it
+#: to `sys.path`; it just quietly fails to help, which is how this survived.
+_SEARCH = {
+    "x402_core": REPO / "frameworks" / "x402_core",
+    "langgraph": REPO / "frameworks" / "langgraph",
+    "google_adk": REPO / "frameworks" / "google_adk",
+    "claude_agent_sdk": REPO / "frameworks" / "claude_agent_sdk",
+    # `cockpit_kit` left `frameworks/` for `cockpit/` when the package shed its UI (A2, C4). It
+    # is nested one deeper than the others because it is a package rather than a bare module.
+    "cockpit_kit": REPO / "cockpit" / "cockpit_kit",
+}
+for name, path in _SEARCH.items():
+    assert path.is_dir(), (
+        f"{name} is not at {path}. The layout changed and this list did not -- a stale path on "
+        "sys.path fails silently, which is why it is asserted."
+    )
+    if str(path) not in sys.path:
+        sys.path.insert(0, str(path))
 
 from x402_core import load_wallet_config  # noqa: E402
 
@@ -128,6 +151,38 @@ def _build_governor(framework: str, policy: str | None) -> Any:
     from aegoll.plugin import Governor  # noqa: PLC0415
 
     return Governor(policy=policy, advisor=None, framework=framework)
+
+
+def provenance(policy: str | None = None) -> dict[str, Any]:
+    """What this measurement ran against. Stamped on every result, without exception.
+
+    The prototype learned this the hard way: nothing recorded **which policy bundle** a
+    measurement used, so a rule change would have silently invalidated every stored figure with
+    no way to notice. A number with no provenance is not a measurement, it is an anecdote with a
+    decimal point — and the failure is quiet, which is the worst kind.
+
+    Four things, each answering a question somebody asks later:
+
+    * `aegoll` — which implementation produced it. Behaviour changed between 0.1.0 and 0.1.1.
+    * `aegs` — which specification version's rules it was scored against.
+    * `policy` — the pack's **content hash**, not just its name. A label can be reused across
+      edited rules; a hash cannot, which is why the schema prefers it.
+    * `measuredAt` — when, in UTC. Provider pricing and testnet conditions both move.
+
+    Raises rather than degrading if the policy cannot be loaded. A stamp with a hole in it invites
+    exactly the interpretation it exists to prevent.
+    """
+    import aegoll
+    from aegoll.config import load_bundle
+    from aegoll.record import AEGS_VERSION
+
+    bundle = load_bundle(policy) if policy else load_bundle()
+    return {
+        "aegoll": aegoll.__version__,
+        "aegs": AEGS_VERSION,
+        "policy": {"name": bundle.name, "hash": bundle.hash},
+        "measuredAt": datetime.now(timezone.utc).isoformat(),
+    }
 
 
 async def run_cell(
@@ -269,9 +324,11 @@ def _fmt_compare(cells: list[Cell]) -> str:
         "",
         "  Read the overhead column carefully: it is the *model's* run-to-run variance,",
         "  not the layer's cost. AEGL's decisions are deterministic and invoke no model.",
-        "  Measured separately (`aegoll bench -n 3000`): **p50 128 us, p99 211 us, $0**.",
+        "  Measured separately (`aegoll bench -n 3000`, ten runs): **p50 ~170 us and $0**,",
+        "  where p50 ranged 139-330 us across identical runs. The spread is machine load,",
+        "  not the layer -- see EXP-007. A single figure here would be over-precise.",
         f"  This sweep made {decided} governed decision(s) — roughly "
-        f"{decided * 0.128:.1f} ms of compute and no tokens at all.",
+        f"{decided * 0.17:.1f} ms of compute and no tokens at all.",
         "",
         "  So the honest statement is not 'governance costs 20%'. It is: governance",
         "  costs microseconds and nothing in tokens, and the LLM figures either side of",
@@ -348,15 +405,33 @@ async def _main() -> int:
 
     if args.json:
         print(json.dumps({
+            # First key on purpose: a reader should not be able to reach the numbers without
+            # passing what produced them.
+            "provenance": provenance(args.policy),
             "cells": [c.as_dict() for c in cells],
             "totals": {
                 "llmCostUsd": round(spent, 6),
                 "usdcSpentUsd": round(sum(c.usdc_spent_usd for c in cells), 6),
                 "cells": len(cells), "failed": len(failed),
             },
+            # C6.7 in the shape a machine reads. The prose version is in harness/README.md, but a
+            # figure lifted out of this JSON into a chart would otherwise arrive without its
+            # sample size attached.
+            "limits": {
+                "runsPerCell": args.repeat,
+                "note": (
+                    "one run per cell: these are samples, not averages"
+                    if args.repeat == 1
+                    else f"{args.repeat} runs per cell, averaged"
+                ),
+                "failedCells": [c.label for c in failed],
+            },
         }, indent=2))
         return 0
 
+    stamp = provenance(args.policy)
+    print(f"\n  aegoll {stamp['aegoll']}   AEGS {stamp['aegs']}   "
+          f"policy {stamp['policy']['name']} {stamp['policy']['hash'][:12]}")
     print("\n" + _fmt_matrix(cells))
     if args.compare:
         print(_fmt_compare(cells))

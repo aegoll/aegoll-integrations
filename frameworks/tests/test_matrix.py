@@ -116,7 +116,15 @@ def test_the_comparison_refuses_to_call_model_variance_an_overhead():
          cell(governed=True, ok=True, llm_cost_usd=0.0012, decisions=2)]
     )
     assert "not the layer's cost" in text
-    assert "128 us" in text, "the measured deterministic overhead is not stated"
+    # A *range*, not a point. This asserted `128 us` for as long as that figure was quoted,
+    # and EXP-007 then measured p50 across ten runs at 139-330 us -- putting the single-run 128
+    # below the observed minimum. A test that pins an over-precise number keeps it alive, so this
+    # now requires the spread to be stated rather than a headline.
+    assert "us" in text, "no deterministic overhead figure at all"
+    assert "139-330" in text, (
+        "the overhead is quoted without its spread. p50 varies 2.4x across identical runs "
+        "(EXP-007), so a single number reads as precision the measurement does not have."
+    )
     assert "no tokens" in text
 
 
