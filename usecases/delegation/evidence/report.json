@@ -1,0 +1,257 @@
+{
+  "policy": {
+    "name": "default",
+    "hash": "2f42957b14801d1f33c1bb3b3a6376a0",
+    "rules": 12,
+    "ruleList": [
+      {
+        "id": "deny-sanctioned",
+        "priority": 0,
+        "verdict": "REJECT",
+        "condition": "vendor.sanctioned",
+        "reason": "sanctioned counterparty"
+      },
+      {
+        "id": "deny-over-balance",
+        "priority": 5,
+        "verdict": "REJECT",
+        "condition": "not budget.ok and budget.binding is one of balance, emergency_reserve",
+        "reason": "insufficient treasury balance"
+      },
+      {
+        "id": "internal-approve-within-budget",
+        "priority": 8,
+        "verdict": "APPROVE",
+        "condition": "channel is internal and budget.ok",
+        "reason": "token budget available for this run"
+      },
+      {
+        "id": "internal-reject-over-budget",
+        "priority": 9,
+        "verdict": "REJECT",
+        "condition": "channel is internal and not budget.ok",
+        "reason": "token budget exhausted -- the run must not start"
+      },
+      {
+        "id": "review-budget-exhausted",
+        "priority": 10,
+        "verdict": "REVIEW",
+        "condition": "not budget.ok",
+        "reason": "outside a budget envelope"
+      },
+      {
+        "id": "escalate-high-risk",
+        "priority": 20,
+        "verdict": "ESCALATE",
+        "condition": "risk.score is at least 0.6",
+        "reason": "risk score above tolerance"
+      },
+      {
+        "id": "review-untrusted-vendor-nontrivial",
+        "priority": 30,
+        "verdict": "REVIEW",
+        "condition": "trust.score is under 0.4 and amount_usd is at least 1.0",
+        "reason": "low vendor trust for a non-trivial amount"
+      },
+      {
+        "id": "review-large",
+        "priority": 40,
+        "verdict": "REVIEW",
+        "condition": "amount_usd is at least 100.0",
+        "reason": "amount at or above the review threshold"
+      },
+      {
+        "id": "review-negative-roi",
+        "priority": 50,
+        "verdict": "REVIEW",
+        "condition": "roi.known and roi.ratio is under 1.0 and amount_usd is at least 1.0",
+        "reason": "expected value below cost"
+      },
+      {
+        "id": "auto-approve-micro",
+        "priority": 100,
+        "verdict": "APPROVE",
+        "condition": "amount_usd is under 1.0 and risk.score is under 0.35 and budget.ok",
+        "reason": "micro-transaction inside all envelopes"
+      },
+      {
+        "id": "approve-trusted-moderate",
+        "priority": 200,
+        "verdict": "APPROVE",
+        "condition": "amount_usd is under 25.0 and trust.score is at least 0.7 and risk.score is under 0.4 and budget.ok",
+        "reason": "trusted vendor, moderate amount"
+      },
+      {
+        "id": "default-review",
+        "priority": 9999,
+        "verdict": "REVIEW",
+        "condition": "always",
+        "reason": "no rule matched; defaulting to review"
+      }
+    ]
+  },
+  "profile": "aegs-1",
+  "spend": {
+    "decisions": 1,
+    "settled": 0,
+    "spentUsd": "0.000000",
+    "byVerdict": {
+      "REVIEW": 1
+    },
+    "byAttributedControl": {
+      "treasury": 1
+    }
+  },
+  "envelopes": {
+    "external": [
+      {
+        "name": "per_transaction",
+        "window": "per call (base)",
+        "limitUsd": "0.500000",
+        "usedUsd": null,
+        "headroomUsd": "0.500000",
+        "cumulative": false,
+        "binding": false,
+        "tightest": true
+      },
+      {
+        "name": "balance",
+        "window": "spendable balance",
+        "limitUsd": "490.000000",
+        "usedUsd": "0.000000",
+        "headroomUsd": "490.000000",
+        "cumulative": true,
+        "binding": false,
+        "tightest": false
+      },
+      {
+        "name": "daily",
+        "window": "today",
+        "limitUsd": "50.000000",
+        "usedUsd": "0.000000",
+        "headroomUsd": "50.000000",
+        "cumulative": true,
+        "binding": false,
+        "tightest": false
+      },
+      {
+        "name": "monthly",
+        "window": "this month",
+        "limitUsd": "300.000000",
+        "usedUsd": "0.000000",
+        "headroomUsd": "300.000000",
+        "cumulative": true,
+        "binding": false,
+        "tightest": false
+      },
+      {
+        "name": "per_vendor",
+        "window": "vendor, rolling 30d",
+        "limitUsd": "100.000000",
+        "usedUsd": "0.000000",
+        "headroomUsd": "100.000000",
+        "cumulative": true,
+        "binding": false,
+        "tightest": false
+      },
+      {
+        "name": "per_resource",
+        "window": "resource, rolling 30d",
+        "limitUsd": "50.000000",
+        "usedUsd": "0.000000",
+        "headroomUsd": "50.000000",
+        "cumulative": true,
+        "binding": false,
+        "tightest": false
+      }
+    ],
+    "internal": [
+      {
+        "name": "per_transaction",
+        "window": "per call (base)",
+        "limitUsd": "0.040000",
+        "usedUsd": null,
+        "headroomUsd": "0.040000",
+        "cumulative": false,
+        "binding": false,
+        "tightest": true
+      },
+      {
+        "name": "balance",
+        "window": "spendable balance",
+        "limitUsd": "0.240000",
+        "usedUsd": "0.000000",
+        "headroomUsd": "0.240000",
+        "cumulative": true,
+        "binding": false,
+        "tightest": false
+      },
+      {
+        "name": "daily",
+        "window": "today",
+        "limitUsd": "0.150000",
+        "usedUsd": "0.000000",
+        "headroomUsd": "0.150000",
+        "cumulative": true,
+        "binding": false,
+        "tightest": false
+      },
+      {
+        "name": "monthly",
+        "window": "this month",
+        "limitUsd": "0.250000",
+        "usedUsd": "0.000000",
+        "headroomUsd": "0.250000",
+        "cumulative": true,
+        "binding": false,
+        "tightest": false
+      },
+      {
+        "name": "per_vendor",
+        "window": "vendor, rolling 30d",
+        "limitUsd": "0.250000",
+        "usedUsd": "0.000000",
+        "headroomUsd": "0.250000",
+        "cumulative": true,
+        "binding": false,
+        "tightest": false
+      },
+      {
+        "name": "per_resource",
+        "window": "resource, rolling 30d",
+        "limitUsd": "0.200000",
+        "usedUsd": "0.000000",
+        "headroomUsd": "0.200000",
+        "cumulative": true,
+        "binding": false,
+        "tightest": false
+      }
+    ]
+  },
+  "decisions": [
+    {
+      "at": "2026-08-18T13:21:02.674097+00:00",
+      "verdict": "REVIEW",
+      "amountUsd": "1.000000",
+      "vendor": "data-co",
+      "resource": "/research/report",
+      "attributedControl": "treasury",
+      "reason": "per_transaction (per call (base)) admits $0.500000 but the request is $1.000000"
+    }
+  ],
+  "pendingReviews": 1,
+  "chain": {
+    "entries": 1,
+    "valid": true,
+    "problems": [],
+    "hash": {
+      "function": "sha256",
+      "bits": 128
+    },
+    "caveat": "a hash chain detects edits and middle-deletions, not truncation: any prefix of a valid chain is itself valid. Closing that needs an external anchor."
+  },
+  "versions": {
+    "aegoll": "0.1.1",
+    "aegs": "0.1"
+  }
+}
